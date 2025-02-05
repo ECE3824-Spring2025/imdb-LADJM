@@ -1,42 +1,30 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Website Title -->
     <title>IMDB Top 10</title>
-    <!-- Import .css file -->
     <link rel="stylesheet" href="proj1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <div class="container">
-        <!-- This is the Header for our Website-->>
         <h1>Top 10 Movies or TV Shows</h1>
-
-        <!-- Genre Selection Dropdown Menu -->
-        <!-- Below is different Options -->
         <label for="genre">Select Genre:</label>
-        <select id="genre" onchange="loadContent()">
-            <option value="">--Select Genre--</option>
-            <option value="Action">Action</option>
-            <option value="Comedy">Comedy</option>
-            <option value="Drama">Drama</option>
-            <option value="Horror">Horror</option>
-            <option value="Thriller">Thriller</option>
-        </select>
-
-        <!-- Display Top 10 Movies or TV Shows -->
+        <div class="custom-select">
+            <select id="genre" onchange="loadContent()">
+                <option value="">--Select Genre--</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+                <option value="Horror">Horror</option>
+                <option value="Thriller">Thriller</option>
+            </select>
+        </div>
         <div id="content-list">
             <!-- Content will be displayed here -->
         </div>
     </div>
-
-    <!-- Import .js file (JavaScript) -->
-    <script src="proj1.css"></script>
+    <script src="proj1.js"></script>
 </body>
 </html>
-=======
-hello world
->>>>>>> main
