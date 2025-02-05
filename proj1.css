@@ -103,6 +103,13 @@ label {
     color: #555;
 }
 
+.movie-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
