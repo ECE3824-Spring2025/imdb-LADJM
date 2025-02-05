@@ -9,7 +9,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Dylan smells</h1>
+        <h1>IMDB MOVIES</h1>
+        <div id="favorites-list"></div>
         <label for="genre">Select Genre:</label>
         <div class="custom-select">
             <select id="genre" onchange="loadContent()">
@@ -19,11 +20,24 @@
                 <option value="Drama">Drama</option>
             </select>
         </div>
-        <div id="content-list">
-            <!-- Content will be displayed here -->
+
+        <!-- Category 1: Sorted by Votes -->
+        <div class="category">
+            <h2>Top Movies by Votes</h2>
+            <div id="content-list-votes" class="content-list"></div>
+        </div>
+
+        <!-- Category 2: Sorted by Rating -->
+        <div class="category">
+            <h2>Top Movies by Rating</h2>
+            <div id="content-list-rating" class="content-list"></div>
         </div>
     </div>
     <script src="proj1.js"></script>
 </body>
+<<<<<<< HEAD
 </html>
 
+=======
+</html>
+>>>>>>> 48025245913e6abf6a050f96a9daaea5c694de4f
