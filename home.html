@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Ratings</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>Project1</title>
+    <link rel="stylesheet" href="proj1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Movie Ratings and Votes</h1>
-    
-    <label for="genre">Select Genre:</label>
-    <select id="genre">
-        <option value="drama">Drama</option>
-        <option value="action">Action</option>
-        <option value="comedy">Comedy</option>
-    </select>
-
-    <button onclick="loadMovies()">Load Movies</button>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>IMDb Rating</th>
-                <th>Votes</th>
-            </tr>
-        </thead>
-        <tbody id="movie-list">
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>IMDB MOVIES</h1>
+        <label for="genre">Select Genre:</label>
+        <div class="custom-select">
+            <select id="genre" onchange="loadContent()">
+                <option value="">--Select Genre--</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+            </select>
+        </div>
+        <div id="content-list">
+            <!-- Content will be displayed here -->
+        </div>
+    </div>
+    <script src="proj1.js"></script>
 </body>
 </html>
