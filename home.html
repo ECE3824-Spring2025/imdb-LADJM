@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project1</title>
+    <link rel="stylesheet" href="proj1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>IMDB MOVIES</h1>
+        <label for="genre">Select Genre:</label>
+        <div class="custom-select">
+            <select id="genre" onchange="loadContent()">
+                <option value="">--Select Genre--</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+            </select>
+        </div>
+
+        <!-- Category 1: Sorted by Votes -->
+        <div class="category">
+            <h2>Top Movies by Votes</h2>
+            <div id="content-list-votes" class="content-list"></div>
+        </div>
+
+        <!-- Category 2: Sorted by Rating -->
+        <div class="category">
+            <h2>Top Movies by Rating</h2>
+            <div id="content-list-rating" class="content-list"></div>
+        </div>
+    </div>
+    <script src="proj1.js"></script>
+</body>
+</html>
