@@ -1,1 +1,34 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ratings</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Movie Ratings and Votes</h1>
+    
+    <label for="genre">Select Genre:</label>
+    <select id="genre">
+        <option value="drama">Drama</option>
+        <option value="action">Action</option>
+        <option value="comedy">Comedy</option>
+    </select>
+
+    <button onclick="loadMovies()">Load Movies</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>IMDb Rating</th>
+                <th>Votes</th>
+            </tr>
+        </thead>
+        <tbody id="movie-list">
+        </tbody>
+    </table>
+</body>
+</html>
