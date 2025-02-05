@@ -1,0 +1,57 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Background color */
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Center Text */
+h1 {
+    text-align: center;
+}
+
+/* Make the Text Bold */
+label {
+    font-weight: bold;
+}
+
+/*  */
+select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 200px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Add Margin to top */
+#content-list {
+    margin-top: 20px;
+}
+
+.movie-item {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.movie-item h3 {
+    margin: 0;
+}
+
+.movie-item p {
+    margin: 5px 0;
+}
