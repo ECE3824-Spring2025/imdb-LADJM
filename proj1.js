@@ -77,17 +77,24 @@ function loadContent() {
         contentList.innerHTML = ''; // Clear previous content
         const movies = data[genre];
 
-        // Sort movies by score (descending) or votes (descending)
-        movies.sort((a, b) => b.score - a.score);  // Sorting by score as an example
+        // Sort movies first by rating (descending), then by votes (descending)
+        movies.sort((a, b) => {
+            if (b.rating && a.rating) {
+                return b.rating - a.rating; // Sort by rating
+            } else if (b.votes && a.votes) {
+                return parseInt(b.votes.replace(/[^\d]/g, '')) - parseInt(a.votes.replace(/[^\d]/g, '')); // Sort by votes
+            }
+            return 0;
+        });
 
         // Display top 10 movies
         movies.slice(0, 10).forEach(movie => {
             const movieElement = document.createElement('div');
             movieElement.classList.add('movie-item');
             movieElement.innerHTML = `
-                <h3>${movie.title}</h3>
-                <p>IMDb Score: ${movie.score}</p>
-                <p>Votes: ${movie.votes}</p>
+                <h3>${movie.name}</h3>
+                <p>IMDb Rating: ${movie.rating || 'N/A'}</p>
+                <p>Votes: ${movie.votes || 'N/A'}</p>
             `;
             contentList.appendChild(movieElement);
         });
