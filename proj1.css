@@ -59,14 +59,24 @@ label {
     color: #666;
 }
 
-/* Movie List */
-#content-list {
-    margin-top: 20px;
+/* Category Sections */
+.category {
+    margin-top: 30px;
+}
+
+.category h2 {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.content-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
 }
 
+/* Movie Item */
 .movie-item {
     background-color: #fff;
     border: 1px solid #ddd;
@@ -92,6 +102,39 @@ label {
     font-size: 0.9rem;
     color: #555;
 }
+#favorites-list {
+    margin-top: 20px;
+    padding: 20px;
+    border-top: 2px solid #ccc;
+}
+
+.favorite-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.movie-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -104,7 +147,7 @@ label {
         font-size: 2rem;
     }
 
-    #content-list {
+    .content-list {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 }
