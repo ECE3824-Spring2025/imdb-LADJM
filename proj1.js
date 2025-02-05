@@ -69,6 +69,10 @@ const data = {
     ]
 };
 
+
+// Array to store favorite movies
+let favoriteMovies = [];
+
 function loadContent() {
     const genre = document.getElementById('genre').value;
     const contentListVotes = document.getElementById('content-list-votes');
@@ -103,6 +107,7 @@ function loadContent() {
                 <h3>${movie.name}</h3>
                 <p>Votes: ${movie.votes || 'N/A'}</p>
                 <p>Rating: ${movie.rating || 'N/A'}</p>
+                <button onclick="addToFavorites('${movie.id}', '${movie.name}')">Add to Favorites</button>
             `;
             contentListVotes.appendChild(movieElement);
         });
@@ -115,6 +120,7 @@ function loadContent() {
                 <h3>${movie.name}</h3>
                 <p>Rating: ${movie.rating || 'N/A'}</p>
                 <p>Votes: ${movie.votes || 'N/A'}</p>
+                <button onclick="addToFavorites('${movie.id}', '${movie.name}')">Add to Favorites</button>
             `;
             contentListRating.appendChild(movieElement);
         });
@@ -123,3 +129,50 @@ function loadContent() {
         contentListRating.innerHTML = '';
     }
 }
+
+// Function to add a movie to favorites
+function addToFavorites(id, name) {
+    if (!favoriteMovies.some(movie => movie.id === id)) {
+        favoriteMovies.push({ id, name });
+        alert(`${name} added to favorites!`);
+        updateFavoritesList();
+    } else {
+        alert(`${name} is already in your favorites!`);
+    }
+}
+
+// Function to update the favorites list displayed on the page
+function updateFavoritesList() {
+    const favoritesList = document.getElementById('favorites-list');
+    if (favoritesList) {
+        favoritesList.innerHTML = '<h2>My Favorites</h2>';
+        if (favoriteMovies.length > 0) {
+            favoriteMovies.forEach(movie => {
+                const favoriteItem = document.createElement('div');
+                favoriteItem.classList.add('favorite-item');
+                favoriteItem.innerHTML = `
+                    <h3>${movie.name}</h3>
+                    <button onclick="removeFromFavorites('${movie.id}')">Remove</button>
+                `;
+                favoritesList.appendChild(favoriteItem);
+            });
+        } else {
+            favoritesList.innerHTML += '<p>No favorites added yet.</p>';
+        }
+    }
+}
+
+// Function to remove a movie from favorites
+function removeFromFavorites(id) {
+    favoriteMovies = favoriteMovies.filter(movie => movie.id !== id);
+    updateFavoritesList();
+    alert('Movie removed from favorites!');
+}
+
+// Initialize favorites list on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const favoritesSection = document.createElement('div');
+    favoritesSection.id = 'favorites-list';
+    document.body.appendChild(favoritesSection);
+    updateFavoritesList();
+});
