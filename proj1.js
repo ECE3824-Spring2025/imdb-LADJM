@@ -71,34 +71,55 @@ const data = {
 
 function loadContent() {
     const genre = document.getElementById('genre').value;
-    const contentList = document.getElementById('content-list');
+    const contentListVotes = document.getElementById('content-list-votes');
+    const contentListRating = document.getElementById('content-list-rating');
 
     if (genre && data[genre]) {
-        contentList.innerHTML = ''; // Clear previous content
         const movies = data[genre];
 
-        // Sort movies first by rating (descending), then by votes (descending)
-        movies.sort((a, b) => {
-            if (b.rating && a.rating) {
-                return b.rating - a.rating; // Sort by rating
-            } else if (b.votes && a.votes) {
-                return parseInt(b.votes.replace(/[^\d]/g, '')) - parseInt(a.votes.replace(/[^\d]/g, '')); // Sort by votes
-            }
-            return 0;
+        // Clear previous content
+        contentListVotes.innerHTML = '';
+        contentListRating.innerHTML = '';
+
+        // Sort by votes (descending)
+        const sortedByVotes = [...movies].sort((a, b) => {
+            const votesA = a.votes ? parseInt(a.votes.replace(/[^\d]/g, '')) : 0;
+            const votesB = b.votes ? parseInt(b.votes.replace(/[^\d]/g, '')) : 0;
+            return votesB - votesA;
         });
 
-        // Display top 10 movies
-        movies.slice(0, 10).forEach(movie => {
+        // Sort by rating (descending)
+        const sortedByRating = [...movies].sort((a, b) => {
+            const ratingA = a.rating || 0;
+            const ratingB = b.rating || 0;
+            return ratingB - ratingA;
+        });
+
+        // Display top 10 movies by votes
+        sortedByVotes.slice(0, 10).forEach(movie => {
             const movieElement = document.createElement('div');
             movieElement.classList.add('movie-item');
             movieElement.innerHTML = `
                 <h3>${movie.name}</h3>
-                <p>IMDb Rating: ${movie.rating || 'N/A'}</p>
+                <p>Votes: ${movie.votes || 'N/A'}</p>
+                <p>Rating: ${movie.rating || 'N/A'}</p>
+            `;
+            contentListVotes.appendChild(movieElement);
+        });
+
+        // Display top 10 movies by rating
+        sortedByRating.slice(0, 10).forEach(movie => {
+            const movieElement = document.createElement('div');
+            movieElement.classList.add('movie-item');
+            movieElement.innerHTML = `
+                <h3>${movie.name}</h3>
+                <p>Rating: ${movie.rating || 'N/A'}</p>
                 <p>Votes: ${movie.votes || 'N/A'}</p>
             `;
-            contentList.appendChild(movieElement);
+            contentListRating.appendChild(movieElement);
         });
     } else {
-        contentList.innerHTML = '<p>Please select a genre to see the top 10 content.</p>';
+        contentListVotes.innerHTML = '<p>Please select a genre to see the top content.</p>';
+        contentListRating.innerHTML = '';
     }
 }
