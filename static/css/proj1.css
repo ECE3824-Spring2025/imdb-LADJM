@@ -3,6 +3,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     margin: 0;
+
     padding: 20px;
     color: #333;
 }
@@ -235,8 +236,8 @@ button:hover {
     h1 {
         font-size: 2rem;
     }
-
     #movie-list {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 }
+

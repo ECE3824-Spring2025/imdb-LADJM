@@ -38,6 +38,7 @@ async function loadContent() {
         contentListRating.innerHTML = '';
 
         // Sort by votes (descending)
+
         const sortedByVotes = [...filteredMovies].sort((a, b) => {
             const votesA = a.votes ? parseInt(a.votes.replace(/[^\d]/g, '')) : 0;
             const votesB = b.votes ? parseInt(b.votes.replace(/[^\d]/g, '')) : 0;
@@ -45,6 +46,7 @@ async function loadContent() {
         });
 
         // Sort by rating (descending)
+
         const sortedByRating = [...filteredMovies].sort((a, b) => {
             const ratingA = a.rating || 0;
             const ratingB = b.rating || 0;
@@ -53,6 +55,7 @@ async function loadContent() {
 
         // Display top 10 movies by votes
         sortedByVotes.slice(0, 10).forEach(movie => {
+
             const movieElement = createMovieElement(movie);
             contentListVotes.appendChild(movieElement);
         });
@@ -66,6 +69,7 @@ async function loadContent() {
         contentListVotes.innerHTML = '<p>Please select a genre to see the top content.</p>';
         contentListRating.innerHTML = '';
     }
+
 
     // Hide loading indicator
     loading.style.display = 'none'; // Hide the loading indicator
@@ -124,6 +128,7 @@ function removeFromFavorites(id) {
     alert('Movie removed from favorites!');
 }
 
+
 // Function to search movies
 function searchMovies() {
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
@@ -141,12 +146,14 @@ function searchMovies() {
     });
 }
 
+
 // Initialize favorites list on page load
 document.addEventListener('DOMContentLoaded', () => {
     const favoritesSection = document.createElement('div');
     favoritesSection.id = 'favorites-list';
     document.body.appendChild(favoritesSection);
     updateFavoritesList();
+
 
     // Load content on page load
     loadContent();
