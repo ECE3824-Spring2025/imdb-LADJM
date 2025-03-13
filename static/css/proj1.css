@@ -191,6 +191,22 @@ button:hover {
     background-color: #0056b3;
 }
 
+/* Search Bar */
+#search-bar {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Movie Card */
+.movie-card {
+    display: block; /* Ensure cards are visible by default */
+    margin-bottom: 20px;
+}
+
 /* Back to Top Button */
 #back-to-top {
     position: fixed;

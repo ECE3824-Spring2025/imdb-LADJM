@@ -124,6 +124,23 @@ function removeFromFavorites(id) {
     alert('Movie removed from favorites!');
 }
 
+// Function to search movies
+function searchMovies() {
+    const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+    const movieCards = document.querySelectorAll('.movie-card');
+
+    movieCards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        const genre = card.getAttribute('data-genre');
+
+        if (title.includes(searchTerm) || genre.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 // Initialize favorites list on page load
 document.addEventListener('DOMContentLoaded', () => {
     const favoritesSection = document.createElement('div');
@@ -133,4 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load content on page load
     loadContent();
+
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        searchBar.addEventListener('input', searchMovies);
+    }
 });
