@@ -158,19 +158,39 @@ function goToPage() {
     }
 }
 
-// Initialize favorites list on page load
+// Function to filter movies by genre
+function filterByGenre() {
+    const genreSelect = document.getElementById('genre-select');
+    const selectedGenre = genreSelect.value;
+
+    console.log('Selected Genre:', selectedGenre); // Debugging
+
+    // Construct the URL with the selected genre as a query parameter
+    const url = new URL(window.location.href);
+    url.searchParams.set('genre', selectedGenre);
+    url.searchParams.set('page', 1); // Reset to the first page when changing genres
+
+    console.log('New URL:', url.toString()); // Debugging
+
+    // Reload the page with the new URL
+    window.location.href = url.toString();
+}
+
+function updateSorting() {
+    const sortSelect = document.getElementById('sort-select');
+    const selectedSort = sortSelect.value;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', selectedSort);
+    url.searchParams.set('page', 1); // Reset to the first page when changing sorting
+    window.location.href = url.toString();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const favoritesSection = document.createElement('div');
-    favoritesSection.id = 'favorites-list';
-    document.body.appendChild(favoritesSection);
-    updateFavoritesList();
-
-
-    // Load content on page load
-    loadContent();
-
-    const searchBar = document.getElementById('search-bar');
-    if (searchBar) {
-        searchBar.addEventListener('input', searchMovies);
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedSort = urlParams.get('sort') || 'rating';
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortSelect.value = selectedSort;
     }
 });

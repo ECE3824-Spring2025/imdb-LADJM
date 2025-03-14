@@ -88,17 +88,30 @@ def get_movies():
 @app.route('/')
 def index():
     try:
-        # Get page and per_page parameters from the request (default to page 1 and 30 movies per page)
         page = request.args.get('page', 1, type=int)
+        selected_genre = request.args.get('genre', '', type=str)
+        sort_by = request.args.get('sort', 'rating', type=str)  # Default to 'rating'
         per_page = 30
 
-        # Join movies and ratings tables with pagination
-        movies_with_ratings = db.session.query(Movie, Rating).join(Rating, Movie.tconst == Rating.tconst) \
-            .order_by(Rating.averageRating.desc()) \
-            .paginate(page=page, per_page=per_page, error_out=False)
+        query = db.session.query(Movie, Rating).join(Rating, Movie.tconst == Rating.tconst)
 
-        # Pass the paginated data to the template
-        return render_template('home.html', movies=movies_with_ratings.items, pagination=movies_with_ratings)
+        if selected_genre:
+            query = query.filter(Movie.genres.like(f"%{selected_genre}%"))
+
+        if sort_by == 'votes':
+            query = query.order_by(Rating.numVotes.desc())
+        else:
+            query = query.order_by(Rating.averageRating.desc())
+
+        movies_with_ratings = query.paginate(page=page, per_page=per_page, error_out=False)
+
+        return render_template(
+            'home.html',
+            movies=movies_with_ratings.items,
+            pagination=movies_with_ratings,
+            selected_genre=selected_genre,
+            sort_by=sort_by
+        )
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
     
