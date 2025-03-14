@@ -48,35 +48,69 @@ label {
     color: #555;
 }
 
-/* Custom Select Dropdown */
-.custom-select {
-    position: relative;
-    width: 200px;
-    margin: 10px 0;
+/* Filters Container */
+.filters-container {
+    display: flex;
+    gap: 20px; /* Space between dropdowns */
+    justify-content: center; /* Center the dropdowns horizontally */
+    margin-bottom: 20px; /* Space below the dropdowns */
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background for the container */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-.custom-select select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
+/* Individual Filter Dropdown */
+.filter {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between label and dropdown */
+    position: relative; /* Needed for custom arrow positioning */
+}
+
+/* Dropdown Labels */
+.filter label {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Dropdown Select Elements */
+.filter select {
+    padding: 10px 30px 10px 15px; /* More padding on the right for the arrow */
+    font-size: 1rem;
     border: 1px solid #ccc;
+    border-radius: 6px;
     background-color: #fff;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none; /* Remove default arrow for Safari */
+    -moz-appearance: none; /* Remove default arrow for Firefox */
     cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    min-width: 120px; /* Set a minimum width to avoid text overlap */
 }
 
-.custom-select::after {
+/* Dropdown Hover and Focus Effects */
+.filter select:hover,
+.filter select:focus {
+    border-color: #007bff; /* Blue border on hover/focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); /* Subtle glow */
+    outline: none; /* Remove default outline */
+}
+
+
+/* Custom Dropdown Arrow */
+.filter::after {
     content: '▼';
     position: absolute;
+    right: 15px; /* Position the arrow inside the dropdown */
     top: 50%;
-    right: 10px;
     transform: translateY(-50%);
-    pointer-events: none;
+    pointer-events: none; /* Ensure clicks go to the select element */
     color: #666;
+    font-size: 0.9rem;
 }
-
 /* Category Sections */
 .category {
     margin-top: 30px;
@@ -277,6 +311,11 @@ button:hover {
     .container {
         width: 95%;
         padding: 15px;
+    }
+
+    .filters-container {
+        flex-direction: column;
+        align-items: center;
     }
 
     h1 {

@@ -13,9 +13,9 @@
         <h1>Top Movies/Shows</h1>
     </div>
 
-    <div class="container">
-        <!-- Genre Dropdown -->
-        <div class="genre-filter">
+    <!-- Filters Container -->
+    <div class="filters-container">
+        <div class="filter">
             <label for="genre-select">Filter by Genre:</label>
             <select id="genre-select" onchange="filterByGenre()">
                 <option value="">All Genres</option>
@@ -30,16 +30,24 @@
             </select>
         </div>
 
-        <!-- Movie List -->
+        <div class="filter">
+            <label for="sort-select">Sort by:</label>
+            <select id="sort-select" onchange="updateSorting()">
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Rating</option>
+                <option value="votes" {% if sort_by == 'votes' %}selected{% endif %}>Votes</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Movie List and Pagination -->
+    <div class="container">
         <div id="movie-list">
             {% for movie, rating in movies %}
                 <div class="movie-card">
-                    <img src="{{ movie.image }}" alt="{{ movie.primaryTitle }}" class="movie-image">
                     <div class="movie-details">
                         <h2>{{ movie.primaryTitle }}</h2>
                         <p><strong>Year:</strong> {{ movie.startYear }}</p>
                         <p><strong>Genre:</strong> {{ movie.genres }}</p>
-                        <p><strong>Runtime:</strong> {{ movie.runtimeMinutes }} minutes</p>
                         <p><strong>Rating:</strong> {{ rating.averageRating }} ({{ rating.numVotes }} votes)</p>
                     </div>
                 </div>
@@ -49,19 +57,14 @@
         <!-- Pagination Controls -->
         <div class="pagination">
             {% if pagination.has_prev %}
-                <a href="{{ url_for('index', page=pagination.prev_num, genre=selected_genre) }}">Previous</a>
+                <a href="{{ url_for('index', page=pagination.prev_num, genre=selected_genre, sort=sort_by) }}">Previous</a>
             {% endif %}
             <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
             {% if pagination.has_next %}
-                <a href="{{ url_for('index', page=pagination.next_num, genre=selected_genre) }}">Next</a>
+                <a href="{{ url_for('index', page=pagination.next_num, genre=selected_genre, sort=sort_by) }}">Next</a>
             {% endif %}
         </div>
     </div>
-
-    <!-- Pass selected genre to JavaScript -->
-    <script>
-        const selectedGenre = "{{ selected_genre }}";
-    </script>
 
     <!-- Link to your JavaScript file -->
     <script src="{{ url_for('static', filename='js/proj1.js') }}"></script>
