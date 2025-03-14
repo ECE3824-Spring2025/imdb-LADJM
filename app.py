@@ -127,6 +127,42 @@ def search_movies():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@cache.cached(timeout=3600, key_prefix="top_10_by_genre")  # Cache for 1 hour
+def get_top_10_by_genre():
+    try:
+        # Get all unique genres from the database
+        genres = db.session.query(Movie.genres).distinct().all()
+        
+        top_movies_by_genre = {}
+
+        for genre_tuple in genres:
+            genre = genre_tuple[0]
+            if genre:
+                # Query top 10 movies for the genre
+                top_movies = (
+                    db.session.query(Movie, Rating)
+                    .join(Rating, Movie.tconst == Rating.tconst)
+                    .filter(Movie.genres.like(f"%{genre}%"))
+                    .order_by(Rating.averageRating.desc())
+                    .limit(10)
+                    .all()
+                )
+
+                # Store results in a dictionary
+                top_movies_by_genre[genre] = [{
+                    "tconst": movie.tconst,
+                    "primaryTitle": movie.primaryTitle,
+                    "startYear": movie.startYear,
+                    "genres": movie.genres,
+                    "averageRating": rating.averageRating,
+                    "numVotes": rating.numVotes
+                } for movie, rating in top_movies]
+
+        return top_movies_by_genre
+    except Exception as e:
+        return {"error": str(e)}
+
+
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
