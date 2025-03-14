@@ -158,6 +158,24 @@ function goToPage() {
     }
 }
 
+// Function to filter movies by genre
+function filterByGenre() {
+    const genreSelect = document.getElementById('genre-select');
+    const selectedGenre = genreSelect.value;
+
+    console.log('Selected Genre:', selectedGenre); // Debugging
+
+    // Construct the URL with the selected genre as a query parameter
+    const url = new URL(window.location.href);
+    url.searchParams.set('genre', selectedGenre);
+    url.searchParams.set('page', 1); // Reset to the first page when changing genres
+
+    console.log('New URL:', url.toString()); // Debugging
+
+    // Reload the page with the new URL
+    window.location.href = url.toString();
+}
+
 // Initialize favorites list on page load
 document.addEventListener('DOMContentLoaded', () => {
     const favoritesSection = document.createElement('div');
