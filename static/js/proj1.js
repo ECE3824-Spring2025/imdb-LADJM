@@ -146,6 +146,17 @@ function searchMovies() {
     });
 }
 
+// Function to navigate to a specific page
+function goToPage() {
+    const pageInput = document.getElementById('page-input');
+    const pageNumber = parseInt(pageInput.value);
+
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        window.location.href = `{{ url_for('index') }}?page=${pageNumber}`;
+    } else {
+        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+    }
+}
 
 // Initialize favorites list on page load
 document.addEventListener('DOMContentLoaded', () => {
