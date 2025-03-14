@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_caching import Cache
+from flask_caching import Cache  # Import Flask-Caching
 import logging
 
 # Initialize Flask app
@@ -14,9 +14,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Cache configuration
-app.config['CACHE_TYPE'] = 'SimpleCache'
-app.config['CACHE_DEFAULT_TIMEOUT'] = 300
-cache = Cache(app)
+app.config['CACHE_TYPE'] = 'SimpleCache'  # Use SimpleCache for in-memory caching
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # Cache timeout in seconds (5 minutes)
+cache = Cache(app)  # Initialize the cache
 
 # Enable SQLAlchemy logging for debugging
 logging.basicConfig()
@@ -43,7 +43,6 @@ class Rating(db.Model):
     tconst = db.Column(db.String(20), db.ForeignKey('movies.tconst'), primary_key=True)
     averageRating = db.Column(db.Float, nullable=True)
     numVotes = db.Column(db.Integer, nullable=True)
-
 
 # Route to fetch movies with ratings (paginated)
 @app.route('/movies')
@@ -127,6 +126,7 @@ def search_movies():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Function to get top 10 movies by genre (cached)
 @cache.cached(timeout=3600, key_prefix="top_10_by_genre")  # Cache for 1 hour
 def get_top_10_by_genre():
     try:
@@ -161,7 +161,6 @@ def get_top_10_by_genre():
         return top_movies_by_genre
     except Exception as e:
         return {"error": str(e)}
-
 
 # Run the Flask app
 if __name__ == '__main__':
