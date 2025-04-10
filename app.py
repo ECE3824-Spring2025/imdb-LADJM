@@ -1,13 +1,16 @@
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+# from flask_mysqldb import MySQL
 from flask_caching import Cache  # Import Flask-Caching
 import logging
+# from polygon import RESTClient
+import numpy as np
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # MySQL Database Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:my-secret-pw@127.0.0.1/imdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:Boles123@ladjm.cfi0omccgora.us-east-1.rds.amazonaws.com/ladjm'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -114,30 +117,6 @@ def index():
         )
     except Exception as e:
         return f"An error occurred: {str(e)}", 500
-    
-@app.route('/search')
-def search_movies():
-    try:
-        search_term = request.args.get('q', '').lower()
-
-        # Filter movies based on the search term
-        filtered_movies = []
-        for tconst, movie in movies_dict.items():
-            rating = ratings_dict.get(tconst)
-            if (search_term in movie.primaryTitle.lower()) or (search_term in movie.genres.lower()):
-                filtered_movies.append({
-                    'tconst': movie.tconst,
-                    'primaryTitle': movie.primaryTitle,
-                    'startYear': movie.startYear,
-                    'genres': movie.genres,
-                    'runtimeMinutes': movie.runtimeMinutes,
-                    'averageRating': rating.averageRating if rating else 'N/A',
-                    'numVotes': rating.numVotes if rating else 'N/A'
-                })
-
-        return jsonify({"movies": filtered_movies})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 # Function to get top 10 movies by genre (cached)
 @cache.cached(timeout=3600, key_prefix="top_10_by_genre")  # Cache for 1 hour
