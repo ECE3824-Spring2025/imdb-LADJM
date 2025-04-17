@@ -112,7 +112,7 @@ let smallitemsListController = () => {
     $('#table-smallitems').html("<tr> <th>Name</th>  <th>Description</th> <th>Quantity</th>  </tr>");
 
     $.ajax({
-        "url": endpoint01 + "/smallitemreport",
+        "url": endpoint01 + "/movies",
         "method": "GET",
         "success": (results) => {
             console.log(results);  
@@ -121,8 +121,8 @@ let smallitemsListController = () => {
                 $('#message-scan').addClass("alert alert-info");
             } else {
                 for (let i = 0; i < results.length; i++) {
-                    let name = results[i]['name'];
-                    let description = results[i]['description'];
+                    let title = results[i]['primaryTitle'];
+                    let description = results[i][''];
                     let quantity = results[i]['quantity'];
                     let txttablerow = `<tr>
                         <td> ${name} </td>  
