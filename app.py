@@ -49,7 +49,7 @@ class Rating(db.Model):
 
 # Route to fetch movies with ratings (paginated)
 @app.route('/movies')
-@cache.cached(timeout=600)  # Cache for 10 minutes
+@cache.cached(timeout=600)
 def get_movies():
     try:
         # Get page and per_page parameters from the request (default to page 1 and 30 movies per page)
