@@ -121,6 +121,26 @@ let scanController = () => {
         });
     };
 
+    function loadMovies(genre = '', sort = 'rating') {
+        $.ajax({
+            url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
+            method: "GET",
+            success: (results) => {
+                $('#movie-list').empty();
+                results.forEach(movie => {
+                    $('#movie-list').append(`
+                        <div class="movie-card">
+                            <h2>${movie.primaryTitle}</h2>
+                            <p><strong>Year:</strong> ${movie.startYear}</p>
+                            <p><strong>Genre:</strong> ${movie.genres}</p>
+                            <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                        </div>
+                    `);
+                });
+            }
+        });
+    }
+
 let clientListController = () => {
     //clear any previous table data
     $('#table-clients').html("<tr> <th>Client Name</th>  <th>Options</th>  </tr>");
@@ -217,6 +237,7 @@ let loginController = () => {
 
 //document ready section
 $(document).ready( () => {
+    loadMovies();
 
 
     //create the QR code reader
@@ -232,6 +253,7 @@ $(document).ready( () => {
         qrbox: {width: 150, height: 150},
                 rememberLastUsedCamera: false,
         });
+
 
     /* ----------------- start up navigation -----------------*/    
     /* controls what gets revealed when the page is ready     */
@@ -257,6 +279,14 @@ $(document).ready( () => {
     $('.nav-link').click( () => {
         $("html, body").animate({ scrollTop: "0px" }); /* scroll to top of page */
         $(".navbar-collapse").collapse('hide'); /* explicitly collapse the navigation menu */
+    });
+
+    // When filters change
+    $('#genre-select, #sort-select').change(() => {
+        loadMovies(
+            $('#genre-select').val(),
+            $('#sort-select').val()
+        );
     });
 
     /* what happens if the login button is clicked? */
