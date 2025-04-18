@@ -1,7 +1,7 @@
 "use strict";
 
 /* SOME CONSTANTS */
-let endpoint01 = "https://eyy8wuy0pi.execute-api.us-east-1.amazonaws.com/default/project3-oleary";
+let endpoint01 = "https://cl8tnekaej.execute-api.us-east-1.amazonaws.com/default/Website"; 
 
 let html5QrcodeScanner;
 //let endpoint02 = "";
@@ -89,57 +89,37 @@ let scanController = () => {
     $("html, body").animate({ scrollTop: "0px" });
 };
 
-let resetController = () => {
-    $.ajax({
-        "url": endpoint01 + "/reset",
-        "method": "PATCH",
-        "success": (results) => {
-            console.log(results);  
-            $(".content-wrapper").hide();
-            $('#div-inventorylist').show();
-            smallitemsListController();
-        },
-        "error": (data) => {
-            console.log(data);
-            $('#message-scan').html("Scan failed. Try again.");
-            $('#message-scan').addClass("alert alert-danger");
-        }
-        })
-    };
-
-let smallitemsListController = () => {
-
-    $('#table-smallitems').html("<tr> <th>Name</th>  <th>Description</th> <th>Quantity</th>  </tr>");
-
-    $.ajax({
-        "url": endpoint01 + "/movies",
-        "method": "GET",
-        "success": (results) => {
-            console.log(results);  
-            if (results.length === 0) {
-                $('#message-scan').html("No small items found.");
-                $('#message-scan').addClass("alert alert-info");
-            } else {
-                for (let i = 0; i < results.length; i++) {
-                    let title = results[i]['primaryTitle'];
-                    let description = results[i][''];
-                    let quantity = results[i]['quantity'];
-                    let txttablerow = `<tr>
-                        <td> ${name} </td>  
-                        <td> ${description} </td>  
-                        <td> ${quantity} </td>  
-                    </tr>`;
-                    $('#table-smallitems').append(txttablerow);                
+    let moviesListController = () => {
+        $('#movie-list').html(""); // Clear previous content
+    
+        $.ajax({
+            "url": endpoint01 + "/movies",
+            "method": "GET",
+            "success": (results) => {
+                console.log(results);
+                if (results.length === 0) {
+                    $('#movie-list').html("<p>No movies found.</p>");
+                } else {
+                    results.forEach(movie => {
+                        let movieCard = `
+                            <div class="movie-card">
+                                <div class="movie-details">
+                                    <h2>${movie.primaryTitle}</h2>
+                                    <p><strong>Year:</strong> ${movie.startYear}</p>
+                                    <p><strong>Genre:</strong> ${movie.genres}</p>
+                                    <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                </div>
+                            </div>`;
+                        $('#movie-list').append(movieCard);
+                    });
                 }
+            },
+            "error": (error) => {
+                console.error(error);
+                $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
             }
-        },
-        "error": (data) => {
-            console.log(data);
-            $('#message-scan').html("Scan failed. Try again.");
-            $('#message-scan').addClass("alert alert-danger");
-        }
-    });
-};
+        });
+    };
 
 let clientListController = () => {
     //clear any previous table data
@@ -330,10 +310,10 @@ $(document).ready( () => {
         $("#div-Scan").show();
     });
 
-    $('#link-inventory').click( () => {
+    $('#link-movies').click( () => {
         $(".content-wrapper").hide();  
-        $("#div-inventorylist").show();
-        smallitemsListController();
+        $("#div-movielist").show();
+        moviesListController();
     });
 
     $('#link-home').click( () => {
@@ -351,5 +331,45 @@ $(document).ready( () => {
     $('#btnReset').click( () => {
         resetController();
     });
+
+    function filterByGenre() {
+        const genre = $('#genre-select').val();
+        $('.movie-card').each(function() {
+            const cardGenres = $(this).find('p:contains("Genre:")').text().split(': ')[1];
+            if (!genre || cardGenres.includes(genre)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+    
+    function updateSorting() {
+        const sortBy = $('#sort-select').val(); // Gets 'rating' or 'votes'
+        const $container = $('#movie-list');
+        const $items = $('.movie-card').get();
+        
+        $items.sort((a, b) => {
+            // Extract either rating or votes value
+            const aValue = sortBy === 'rating' ? 
+                parseFloat($(a).find('p:contains("Rating:")').text().split(' ')[1]) :
+                parseInt($(a).find('p:contains("votes")').text().match(/\d+/)[0]);
+                
+            const bValue = sortBy === 'rating' ? 
+                parseFloat($(b).find('p:contains("Rating:")').text().split(' ')[1]) :
+                parseInt($(b).find('p:contains("votes")').text().match(/\d+/)[0]);
+            
+            return bValue - aValue; // Descending order (highest first)
+        });
+        
+        $.each($items, (i, item) => {
+            $container.append(item); // Re-insert sorted items
+        });
+    }
+    
+    
+    // Add event listeners
+    $('#genre-select').change(filterByGenre);
+    $('#sort-select').change(updateSorting);
 
 }); /* end the document ready event*/

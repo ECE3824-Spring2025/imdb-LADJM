@@ -45,7 +45,7 @@
     <!--Each individual item can be secured by adding the class: secured -->
         <ul class="navbar-nav ml-auto">
             <li class="nav-item secured">
-                <a id="link-inventory" class="nav-link" href="#"><i class="fa fa-table"></i> Movies </a>
+                <a id="link-movies" class="nav-link" href="#"><i class="fa fa-table"></i> Movies </a>
             </li>
             <li class="nav-item secured">
                 <a id="link-home" class="nav-link" href="#"><i class="fa fa-home"></i> Home </a>
@@ -154,47 +154,32 @@
            <br>
         </div>
 
-        <div class="col-md-8 content-wrapper " id="div-inventorylist" style="display: none;">
+        <div class="col-md-8 content-wrapper" id="div-movielist" style="display: none;">
             <h1>Top Movies/Shows</h1>
             <br>
-			<div class="filters-container">
+            <div class="filters-container">
                 <div class="filter">
                     <label for="genre-select">Filter by Genre:</label>
-                    <select id="genre-select" onchange="filterByGenre()">
+                    <select id="genre-select">
                         <option value="">All Genres</option>
-                        <option value="Drama" {% if selected_genre == 'Drama' %}selected{% endif %}>Drama</option>
-                        <option value="Comedy" {% if selected_genre == 'Comedy' %}selected{% endif %}>Comedy</option>
-                        <option value="Action" {% if selected_genre == 'Action' %}selected{% endif %}>Action</option>
-                        <option value="Short" {% if selected_genre == 'Short' %}selected{% endif %}>Short</option>
-                        <option value="Sport" {% if selected_genre == 'Sport' %}selected{% endif %}>Sport</option>
-                        <option value="Romance" {% if selected_genre == 'Romance' %}selected{% endif %}>Romance</option>
-                        <option value="Documentary" {% if selected_genre == 'Documentary' %}selected{% endif %}>Documentary</option>
-                        <option value="Animation" {% if selected_genre == 'Animation' %}selected{% endif %}>Animation</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Action">Action</option>
+                        <!-- Add other genres as needed -->
                     </select>
                 </div>
-        
+                
                 <div class="filter">
                     <label for="sort-select">Sort by:</label>
-                    <select id="sort-select" onchange="updateSorting()">
-                        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Rating</option>
-                        <option value="votes" {% if sort_by == 'votes' %}selected{% endif %}>Votes</option>
+                    <select id="sort-select">
+                        <option value="rating">Rating</option>
+                        <option value="votes">Votes</option>
                     </select>
                 </div>
-                <div id="movie-list">
-                    {% for movie, rating in movies %}
-                        <div class="movie-card">
-                            <div class="movie-details">
-                                <br>
-                                <h2>{{ movie.primaryTitle }}</h2>
-                                <p><strong>Year:</strong> {{ movie.startYear }}</p>
-                                <p><strong>Genre:</strong> {{ movie.genres }}</p>
-                                <p><strong>Rating:</strong> {{ rating.averageRating }} ({{ rating.numVotes }} votes)</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                
+                <div id="movie-list"></div>
             </div>
-		</div>
+        </div>
 
     <div class="col-md-2"></div>
     </div>
