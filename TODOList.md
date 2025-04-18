@@ -6,8 +6,6 @@
 #### Complete - if task completed 
 
 
-- Connect HTML/Lambda to Our Database on AWS
-
 - Figure out New Caching
 
 - Password encryption
