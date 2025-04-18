@@ -45,7 +45,7 @@
     <!--Each individual item can be secured by adding the class: secured -->
         <ul class="navbar-nav ml-auto">
             <li class="nav-item secured">
-                <a id="link-inventory" class="nav-link" href="#"><i class="fa fa-table"></i> Inventory </a>
+                <a id="link-movies" class="nav-link" href="#"><i class="fa fa-table"></i> Movies </a>
             </li>
             <li class="nav-item secured">
                 <a id="link-home" class="nav-link" href="#"><i class="fa fa-home"></i> Home </a>
@@ -154,19 +154,32 @@
            <br>
         </div>
 
-        <div class="col-md-8 content-wrapper " id="div-inventorylist" style="display: none;">
-			<h1>Small Items Inventory</h1>
-            <table id="table-smallitems" class="table">
-                <tr><th>Name</th><th>Description</th><th>Quantity</th></tr>
-            </table>
-            <div class="text-center">
-                <input type="button" value="Reset" id="btnReset" class="btn btn-primary" style="font-size:2em;width:100%;" >
-            </div>
+        <div class="col-md-8 content-wrapper" id="div-movielist" style="display: none;">
+            <h1>Top Movies/Shows</h1>
             <br>
-            <div class="text-center">
-                <input type="button" value="Home" id="btnHome3" class="btn btn-secondary" style="font-size:2em;width:100%;" >
+            <div class="filters-container">
+                <div class="filter">
+                    <label for="genre-select">Filter by Genre:</label>
+                    <select id="genre-select">
+                        <option value="">All Genres</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Action">Action</option>
+                        <!-- Add other genres as needed -->
+                    </select>
+                </div>
+                
+                <div class="filter">
+                    <label for="sort-select">Sort by:</label>
+                    <select id="sort-select">
+                        <option value="rating">Rating</option>
+                        <option value="votes">Votes</option>
+                    </select>
+                </div>
+                
+                <div id="movie-list"></div>
             </div>
-		</div>
+        </div>
 
     <div class="col-md-2"></div>
     </div>
