@@ -1,0 +1,26 @@
+.movie-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.movie-card h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.filters-container {
+    margin-bottom: 20px;
+}
+
+.filter {
+    margin-bottom: 10px;
+}
+
+.filter select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
