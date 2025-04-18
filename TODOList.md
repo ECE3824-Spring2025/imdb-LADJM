@@ -5,8 +5,6 @@
 
 #### Complete - if task completed 
 
-- Merge Old and New code 
-    - New code is in [Website](Website/) folder with [HTML_File](Project5.html)
 
 - Connect HTML/Lambda to Our Database on AWS
 
