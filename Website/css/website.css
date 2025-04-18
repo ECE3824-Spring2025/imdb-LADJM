@@ -24,3 +24,37 @@
     border-radius: 4px;
     border: 1px solid #ddd;
 }
+
+/* Signup Form Styles */
+#div-signup {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#div-signup h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#link-signup, #link-back-to-login {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#link-signup:hover, #link-back-to-login:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .movie-card {
+        padding: 10px;
+    }
+    
+    #reader {
+        width: 300px !important;
+        height: 300px !important;
+    }
+}
