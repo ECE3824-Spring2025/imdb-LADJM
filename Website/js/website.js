@@ -17,11 +17,8 @@ let onScanSuccess = (qrCodeMessage) => {
 }
 
 let onScanError = (errorMessage) => {
-<<<<<<< HEAD
     // Error handling for scanner
-=======
-    // console.log(errorMessage);
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
 }
 
 let startCamera = async () => {
@@ -34,11 +31,9 @@ let stopCamera = async () => {
     await $("#reader").hide();
 }
 
-<<<<<<< HEAD
+
 let checkOutButtonController = (x)=>{
-=======
-let checkOutButtonController = (x) => {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
     $("#scanclientid").val(x);
     $(".content-wrapper").hide();
     $("#div-Scan").show();
@@ -72,13 +67,8 @@ let scanController = () => {
                 $('#message-scan').html('');
                 $('#message-scan').removeClass();
                 $('#div-scan').hide();
-                $('#div-confirm').show();
-<<<<<<< HEAD
-            }          
-=======
-                saveLastSection("#div-confirm");
-            }
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+                $('#div-confirm').show();        
+
         },
         error: (data) => {
             console.log(data);
@@ -87,20 +77,45 @@ let scanController = () => {
     $("html, body").animate({ scrollTop: "0px" });
 };
 
-let moviesListController = () => {
-    $('#movie-list').html("");
-<<<<<<< HEAD
+
+    let moviesListController = () => {
+        $('#movie-list').html(""); // Clear previous content
+    
+        $.ajax({
+            "url": endpoint01 + "/movies",
+            "method": "GET",
+            "success": (results) => {
+                console.log(results);
+                if (results.length === 0) {
+                    $('#movie-list').html("<p>No movies found.</p>");
+                } else {
+                    results.forEach(movie => {
+                        let movieCard = `
+                            <div class="movie-card">
+                                <div class="movie-details">
+                                    <h2>${movie.primaryTitle}</h2>
+                                    <p><strong>Year:</strong> ${movie.startYear}</p>
+                                    <p><strong>Genre:</strong> ${movie.genres}</p>
+                                    <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                    <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
+                                </div>
+                            </div>`;
+                        $('#movie-list').append(movieCard);
+                    });
+                }
+            },
+            "error": (error) => {
+                console.error(error);
+                $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
+            }
+        });
+    };
+
 
     $.ajax({
         "url": endpoint01 + "/movies",
         "method": "GET",
         "success": (results) => {
-=======
-    $.ajax({
-        url: endpoint01 + "/movies",
-        method: "GET",
-        success: (results) => {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
             console.log(results);
             if (results.length === 0) {
                 $('#movie-list').html("<p>No movies found.</p>");
@@ -119,11 +134,9 @@ let moviesListController = () => {
                 });
             }
         },
-<<<<<<< HEAD
+
         "error": (error) => {
-=======
-        error: (error) => {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
             console.error(error);
             $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
         }
@@ -152,7 +165,7 @@ function loadMovies(genre = '', sort = 'rating') {
 
 let clientListController = () => {
     $('#table-clients').html("<tr> <th>Client Name</th>  <th>Options</th>  </tr>");
-<<<<<<< HEAD
+
     $('#message-clientlist').html("");
     $('#message-clientlist').removeClass();
 
@@ -164,18 +177,7 @@ let clientListController = () => {
             for(let i=0; i< results.length;i++){
                 let clientname = results[i]['lastname'] + ", " + results[i]['firstname'];
                 let clientid = results[i]['clientid'];
-=======
-    $('#message-clientlist').html("").removeClass();
 
-    $.ajax({
-        url: endpoint01 + "/clients",
-        method: "GET",
-        success: (results) => {
-            console.log(results);
-            results.forEach(client => {
-                let clientname = `${client.lastname}, ${client.firstname}`;
-                let clientid = client.clientid;
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
                 let txttablerow = `<tr>
                     <td>${clientname}</td>
                     <td><input type="button" onclick="checkOutButtonController(${clientid})" class="btn btn-primary" value="Check Out"></td>
@@ -191,7 +193,6 @@ let clientListController = () => {
 }
 
 let loginController = () => {
-<<<<<<< HEAD
     $('#login_message').html("");
     $('#login_message').removeClass();
 
@@ -202,17 +203,7 @@ let loginController = () => {
         $('#login_message').addClass("alert alert-danger text-center");
         return;
     }
-   
-=======
-    $('#login_message').html("").removeClass();
-    let username = $("#username").val();
-    let password = $("#password").val();
-    if (username === "" || password === "") {
-        $('#login_message').html('The user name and password are both required.').addClass("alert alert-danger text-center");
-        return;
-    }
-
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+  
     let the_serialized_data = $("#form-login").serialize();
     console.log(the_serialized_data);
 
@@ -227,7 +218,6 @@ let loginController = () => {
                 $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
                 localStorage.userid = results[0]["userid"];
-<<<<<<< HEAD
        
                 $('#login_message').html('');
                 $('#login_message').removeClass();
@@ -235,13 +225,7 @@ let loginController = () => {
                 $('.secured').addClass('unlocked');
                 $('#div-login').hide();
                 $('#div-clientlist').show();
-=======
-                $('#login_message').html("").removeClass();
-                $('.secured').removeClass('locked').addClass('unlocked');
-                $('#div-login').hide();
-                $('#div-clientlist').show();
-                saveLastSection("#div-clientlist");
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
                 clientListController();
                 $("#scanuserid").val(localStorage.userid);
             }
@@ -250,14 +234,161 @@ let loginController = () => {
             console.log(data);
         }
     });
-<<<<<<< HEAD
 
-    $("html, body").animate({ scrollTop: "0px" });
-};
 
-let signupController = () => {
+
+let signUpController = () => {
+    // Clear any previous messages
     $('#signup_message').html("");
     $('#signup_message').removeClass();
+
+    // Get form values
+    let username = $("#signup_username").val();
+    let email = $("#signup_email").val();
+    let password = $("#signup_password").val();
+
+    // Validate required fields
+    if (username == "" || email == "" || password == "") {
+        $('#signup_message').html('All fields are required.');
+        $('#signup_message').addClass("alert alert-danger text-center");
+        return; // Quit the function if any field is empty
+    }
+    
+    let the_serialized_data = $("#form-signup").serialize();
+
+    $.ajax({
+        "url": endpoint01 + "/signup",
+        "method": "POST",
+        "data": the_serialized_data,
+        "success": (results) => {
+            if (results.error) {
+                $('signup_message').html(results.error);
+                $('signup_message').addClass("alert alert-danger text-center");
+            } else {
+                $('#signup_message').html('Account created successfully!');
+                $('#signup_message').addClass("alert alert-success text-center");
+                // Clear form fields
+                $('#form-signup')[0].reset();
+                // after 2 seconds, switch back to login page
+                setTimeout(() => {
+                    $('.content-wrapper').hide();
+                    $('#div-login').show();
+                }, 2000);
+            }
+        },
+        "error": (data) => {
+            console.log(data);
+            $('#signup_message').html('An error occurred. Please try again.');
+            $('#signup_message').addClass("alert alert-danger text-center");
+        }
+    });
+}
+
+let favoritesListController = () => {
+    $('#favorites-list').html(""); // Clear previous content
+    
+    $.ajax({
+        "url": endpoint01 + "/favorites",
+        "method": "GET",
+        "data": { userid: localStorage.userid },
+        "success": (results) => {
+            console.log(results);
+            if (results.length === 0) {
+                $('#favorites-list').html(`
+                    <div class="text-center">
+                        <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
+                        <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
+                            <i class="fa fa-plus"></i> Add to Favorites
+                        </button>
+                    </div>
+                `);
+                
+                // Add click handler for the small add to favorites button
+                $('#btnAddFavoritesSmall').click(() => {
+                    $(".content-wrapper").hide();  
+                    $("#div-movielist").show();
+                    moviesListController();
+                });
+            } else {
+                results.forEach(movie => {
+                    let movieCard = `
+                        <div class="movie-card" data-movie-id="${movie.movieId}">
+                            <div class="movie-details">
+                                <h2>${movie.primaryTitle}</h2>
+                                <p><strong>Year:</strong> ${movie.startYear}</p>
+                                <p><strong>Genre:</strong> ${movie.genres}</p>
+                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                <button class="btn btn-danger remove-favorite" data-movie-id="${movie.movieId}">Remove from Favorites</button>
+                            </div>
+                        </div>`;
+                    $('#favorites-list').append(movieCard);
+                });
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            $('#favorites-list').html(`
+                <div class="text-center">
+                    <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
+                    <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
+                        <i class="fa fa-plus"></i> Add to Favorites
+                    </button>
+                </div>
+            `);
+            
+            // Add click handler for the small add to favorites button
+            $('#btnAddFavoritesSmall').click(() => {
+                $(".content-wrapper").hide();  
+                $("#div-movielist").show();
+                moviesListController();
+            });
+        }
+    });
+};
+
+let addToFavorites = (movieId) => {
+    $.ajax({
+        "url": endpoint01 + "/addfavorite",
+        "method": "POST",
+        "data": {
+            userid: localStorage.userid,
+            movieId: movieId
+        },
+        "success": (results) => {
+            if (results.success) {
+                favoritesListController(); // Refresh the favorites list
+            } else {
+                alert("Failed to add movie to favorites");
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            alert("Error adding movie to favorites");
+        }
+    });
+};
+
+let removeFromFavorites = (movieId) => {
+    $.ajax({
+        "url": endpoint01 + "/removefavorite",
+        "method": "POST",
+        "data": {
+            userid: localStorage.userid,
+            movieId: movieId
+        },
+        "success": (results) => {
+            if (results.success) {
+                favoritesListController(); // Refresh the favorites list
+            } else {
+                alert("Failed to remove movie from favorites");
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            alert("Error removing movie from favorites");
+        }
+    });
+};
 
     let email = $("#signup-email").val();
     let password = $("#signup-password").val();
@@ -314,15 +445,6 @@ let signupController = () => {
         }
     });
 };
-=======
-    $("html, body").animate({ scrollTop: "0px" });
-};
-
-/* LocalStorage Caching Functions */
-function saveLastSection(sectionId) {
-    localStorage.setItem("lastSection", sectionId);
-}
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
 
 function restoreLastSection() {
     let sectionId = localStorage.getItem("lastSection");
@@ -348,23 +470,17 @@ function restoreLastSection() {
 $(document).ready(() => {
     loadMovies();
 
-<<<<<<< HEAD
     let loc = window.location.href+'';
     if (loc.indexOf('http://')==0){
         window.location.href = loc.replace('http://','https://');
-=======
-    if (window.location.href.indexOf('http://') === 0) {
-        window.location.href = window.location.href.replace('http://', 'https://');
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
     }
 
     html5QrcodeScanner = new Html5QrcodeScanner("reader", {
         fps: 10,
-        qrbox: { width: 150, height: 150 },
-        rememberLastUsedCamera: false,
-    });
+        qrbox: {width: 150, height: 150},
+                rememberLastUsedCamera: false,
+        });
 
-<<<<<<< HEAD
     /* ----------------- start up navigation -----------------*/    
     if (localStorage.userid){
         $("#div-clientlist").show()
@@ -374,7 +490,7 @@ $(document).ready(() => {
         $("#scanuserid").val(localStorage.userid);
     }
     else {
-=======
+
     if (localStorage.userid) {
         $(".secured").removeClass("locked").addClass("unlocked");
         if (!restoreLastSection()) {
@@ -383,24 +499,19 @@ $(document).ready(() => {
             clientListController();
         }
     } else {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
         $("#div-login").show();
         $(".secured").removeClass("unlocked").addClass("locked");
         localStorage.removeItem("lastSection");
     }
 
-<<<<<<< HEAD
     /* ------------------  basic navigation -----------------*/
     $('.nav-link').click( () => {
-=======
-    $('.nav-link').click(() => {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
         $("html, body").animate({ scrollTop: "0px" });
         $(".navbar-collapse").collapse('hide');
     });
 
     $('#genre-select, #sort-select').change(() => {
-<<<<<<< HEAD
+
         loadMovies(
             $('#genre-select').val(),
             $('#signup-select').val()
@@ -412,30 +523,35 @@ $(document).ready(() => {
     });
 
     $('#link-logout').click( () => {
-=======
-        loadMovies($('#genre-select').val(), $('#sort-select').val());
-    });
-
-    $('#btnLogin').click(() => loginController());
-
-    $('#link-logout, #btnLogout').click(() => {
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
         localStorage.removeItem("userid");
-        window.location = "./index.html";
+
+        // Hide all content wrappers
+        $(".content-wrapper").hide();
+        // Show login form
+        $("#div-login").show();
+        // Reset secured elements
+        $(".secured").removeClass("unlocked");
+        $(".secured").addClass("locked");
+
     });
 
-<<<<<<< HEAD
+
     $('#btnLogout').click( () => {
         localStorage.removeItem("userid");
-        window.location = "./index.html";
+
+        // Hide all content wrappers
+        $(".content-wrapper").hide();
+        // Show login form
+        $("#div-login").show();
+        // Reset secured elements
+        $(".secured").removeClass("unlocked");
+        $(".secured").addClass("locked");
+
     });
 
     $('#btnPlaceholder').click( () => {
         $(".content-wrapper").hide();  
-=======
-    $('#btnPlaceholder, #btnScanAnother').click(() => {
-        $(".content-wrapper").hide();
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
         $("#div-Scan").show();
         saveLastSection("#div-Scan");
     });
@@ -460,8 +576,15 @@ $(document).ready(() => {
         moviesListController();
     });
 
-    $('#btnChoose').click(() => {
-        $("#btnChoose").hide();
+
+    $('#link-home').click( () => {
+        $(".content-wrapper").hide();  
+        $("#div-favorites").show();
+        favoritesListController();
+    });
+
+    $('#btnChoose').click( () => {
+        $("#btnChoose").hide();    
         stopCamera();
         $("#btnNext").show();
         $("html, body").animate({ scrollTop: "0px" });
@@ -489,6 +612,21 @@ $(document).ready(() => {
         signupController();
     });
 
+    // Sign Up
+    $('#btnShowSignUp').click( () => {
+        $('.content-wrapper').hide();
+        $('#div-signup').show();
+    });
+
+    $('btnBackToLogin').click(() => {
+        $('.content-wrapper').hide();
+        $('#div-login').show();
+    });
+
+    $('#btnSignUp').click( () => {
+        signUpController();
+    });
+
     function filterByGenre() {
         const genre = $('#genre-select').val();
         $('.movie-card').each(function () {
@@ -503,22 +641,15 @@ $(document).ready(() => {
         const $items = $('.movie-card').get();
 
         $items.sort((a, b) => {
-<<<<<<< HEAD
             const aValue = sortBy === 'rating' ? 
-=======
-            const aValue = sortBy === 'rating' ?
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+
                 parseFloat($(a).find('p:contains("Rating:")').text().split(' ')[1]) :
                 parseInt($(a).find('p:contains("votes")').text().match(/\d+/)[0]);
 
             const bValue = sortBy === 'rating' ?
                 parseFloat($(b).find('p:contains("Rating:")').text().split(' ')[1]) :
                 parseInt($(b).find('p:contains("votes")').text().match(/\d+/)[0]);
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
             return bValue - aValue;
         });
 
@@ -526,12 +657,32 @@ $(document).ready(() => {
             $container.append(item);
         });
     }
-<<<<<<< HEAD
+
     
     $('#genre-select').change(filterByGenre);
     $('#sort-select').change(updateSorting);
 });
-=======
+
 });
 
->>>>>>> 1b7b8293d8dcc1e8524f66e04391d24bae0b8577
+    // Add click handler for the Add to Favorites button
+    $('#btnAddFavorites').click( () => {
+        $(".content-wrapper").hide();  
+        $("#div-movielist").show();
+        moviesListController();
+    });
+
+    // Add click handler for removing favorites
+    $(document).on('click', '.remove-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        removeFromFavorites(movieId);
+    });
+
+    // Add click handler for adding favorites from the movies list
+    $(document).on('click', '.add-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        addToFavorites(movieId);
+    });
+
+}); /* end the document ready event*/
+
