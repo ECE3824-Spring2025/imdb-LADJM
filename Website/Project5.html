@@ -49,7 +49,7 @@
                 <a id="link-movies" class="nav-link" href="#"><i class="fa fa-table"></i> Movies </a>
             </li>
             <li class="nav-item secured">
-                <a id="link-home" class="nav-link" href="#"><i class="fa fa-home"></i> Home </a>
+                <a id="link-home" class="nav-link" href="#"><i class="fa fa-heart"></i> Favorites </a>
             </li>
             <li class="nav-item secured">
                 <a id="link-logout" class="nav-link" href="#"><i class="fa fa-sign-out"></i>Logout</a>
@@ -72,6 +72,7 @@
     <div class="row">
     <div class="col-md-2"></div>
 
+    <!-- Login -->
 		<div class="col-md-8 content-wrapper " id="div-login" style="display: none;">
                 <form id='form-login'>
 				<label for="username">User name:</label>
@@ -83,10 +84,44 @@
 				<input type="button" value="Login" id="btnLogin" class="btn btn-primary" style="font-size:2em;width:100%;" >
                 </div>
                 <br>
+                <div class="text-center">
+                    <input type="button" value="Sign Up" id="btnShowSignUp" class="btn btn-secondary" style="font-size:2em;width:100%;" >
+                </div>
+                <br>
                 <div id='login_message' class="">
                 </div>
 			</form>
 		</div>
+
+        <!-- New Sign Up -->
+         <div class="col-md-8 content-wrapper " id="div-signup" style="display: none;">
+            <form id='form-signup'>
+            <label for="username">User name:</label>
+            <input type="text" name="username" id="signup_username" class="form-control" >
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="signup_email" class="form-control" >
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="signup_password" class="form-control" >
+            <br>
+            <div class="text-center">
+                <input type="button" value="Create Account" id="btnSignUp" class="btn btn-primary" style="font-size:2em;width:100%;" >
+            </div>
+            <div id='signup_message' class="">
+            </div>
+        </form>
+        </div>
+
+        <div class="col-md-8 content-wrapper " id="div-favorites" style="display: none;">
+            <h1>My Favorite Movies</h1>
+            <div id="favorites-list" class="movie-list">
+                <!-- Favorites will be populated here -->
+            </div>
+            <br><br><br>
+            <div class="text-center">
+                <input type="button" value="Logout" id="btnLogout" class="btn btn-primary" style="font-size:2em;width:100%;" >
+            </div>
+            <br>
+        </div>
 
         <div class="col-md-8 content-wrapper " id="div-clientlist" style="display: none;">
 			<h1>Client List</h1>
@@ -200,19 +235,16 @@
 
 </div> <!-- container //-->
 
-<br>
-    <div class="container-fluid bg-dark text-white">
+<footer class="footer mt-auto py-3 bg-dark text-white">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 text-center">
-            &copy; Movies from LADJM
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-				&nbsp; <!-- place holder for additional footer content -->
+                &copy; Movies from LADJM
             </div>
         </div>
     </div>
+</footer>
+
 </body>
 </html>
 

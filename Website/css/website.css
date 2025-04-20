@@ -24,3 +24,25 @@
     border-radius: 4px;
     border: 1px solid #ddd;
 }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container-fluid {
+    flex: 1 0 auto;
+}
+
+.footer {
+    flex-shrink: 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}

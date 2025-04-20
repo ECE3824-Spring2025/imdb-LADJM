@@ -108,6 +108,7 @@ let scanController = () => {
                                     <p><strong>Year:</strong> ${movie.startYear}</p>
                                     <p><strong>Genre:</strong> ${movie.genres}</p>
                                     <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                    <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
                                 </div>
                             </div>`;
                         $('#movie-list').append(movieCard);
@@ -234,11 +235,162 @@ let loginController = () => {
     $("html, body").animate({ scrollTop: "0px" });
 }; //Login Controller ends here
 
+let signUpController = () => {
+    // Clear any previous messages
+    $('#signup_message').html("");
+    $('#signup_message').removeClass();
+
+    // Get form values
+    let username = $("#signup_username").val();
+    let email = $("#signup_email").val();
+    let password = $("#signup_password").val();
+
+    // Validate required fields
+    if (username == "" || email == "" || password == "") {
+        $('#signup_message').html('All fields are required.');
+        $('#signup_message').addClass("alert alert-danger text-center");
+        return; // Quit the function if any field is empty
+    }
+    
+    let the_serialized_data = $("#form-signup").serialize();
+
+    $.ajax({
+        "url": endpoint01 + "/signup",
+        "method": "POST",
+        "data": the_serialized_data,
+        "success": (results) => {
+            if (results.error) {
+                $('signup_message').html(results.error);
+                $('signup_message').addClass("alert alert-danger text-center");
+            } else {
+                $('#signup_message').html('Account created successfully!');
+                $('#signup_message').addClass("alert alert-success text-center");
+                // Clear form fields
+                $('#form-signup')[0].reset();
+                // after 2 seconds, switch back to login page
+                setTimeout(() => {
+                    $('.content-wrapper').hide();
+                    $('#div-login').show();
+                }, 2000);
+            }
+        },
+        "error": (data) => {
+            console.log(data);
+            $('#signup_message').html('An error occurred. Please try again.');
+            $('#signup_message').addClass("alert alert-danger text-center");
+        }
+    });
+}
+
+let favoritesListController = () => {
+    $('#favorites-list').html(""); // Clear previous content
+    
+    $.ajax({
+        "url": endpoint01 + "/favorites",
+        "method": "GET",
+        "data": { userid: localStorage.userid },
+        "success": (results) => {
+            console.log(results);
+            if (results.length === 0) {
+                $('#favorites-list').html(`
+                    <div class="text-center">
+                        <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
+                        <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
+                            <i class="fa fa-plus"></i> Add to Favorites
+                        </button>
+                    </div>
+                `);
+                
+                // Add click handler for the small add to favorites button
+                $('#btnAddFavoritesSmall').click(() => {
+                    $(".content-wrapper").hide();  
+                    $("#div-movielist").show();
+                    moviesListController();
+                });
+            } else {
+                results.forEach(movie => {
+                    let movieCard = `
+                        <div class="movie-card" data-movie-id="${movie.movieId}">
+                            <div class="movie-details">
+                                <h2>${movie.primaryTitle}</h2>
+                                <p><strong>Year:</strong> ${movie.startYear}</p>
+                                <p><strong>Genre:</strong> ${movie.genres}</p>
+                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                <button class="btn btn-danger remove-favorite" data-movie-id="${movie.movieId}">Remove from Favorites</button>
+                            </div>
+                        </div>`;
+                    $('#favorites-list').append(movieCard);
+                });
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            $('#favorites-list').html(`
+                <div class="text-center">
+                    <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
+                    <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
+                        <i class="fa fa-plus"></i> Add to Favorites
+                    </button>
+                </div>
+            `);
+            
+            // Add click handler for the small add to favorites button
+            $('#btnAddFavoritesSmall').click(() => {
+                $(".content-wrapper").hide();  
+                $("#div-movielist").show();
+                moviesListController();
+            });
+        }
+    });
+};
+
+let addToFavorites = (movieId) => {
+    $.ajax({
+        "url": endpoint01 + "/addfavorite",
+        "method": "POST",
+        "data": {
+            userid: localStorage.userid,
+            movieId: movieId
+        },
+        "success": (results) => {
+            if (results.success) {
+                favoritesListController(); // Refresh the favorites list
+            } else {
+                alert("Failed to add movie to favorites");
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            alert("Error adding movie to favorites");
+        }
+    });
+};
+
+let removeFromFavorites = (movieId) => {
+    $.ajax({
+        "url": endpoint01 + "/removefavorite",
+        "method": "POST",
+        "data": {
+            userid: localStorage.userid,
+            movieId: movieId
+        },
+        "success": (results) => {
+            if (results.success) {
+                favoritesListController(); // Refresh the favorites list
+            } else {
+                alert("Failed to remove movie from favorites");
+            }
+        },
+        "error": (error) => {
+            console.error(error);
+            alert("Error removing movie from favorites");
+        }
+    });
+};
 
 //document ready section
 $(document).ready( () => {
     loadMovies();
-
 
     //create the QR code reader
     let loc = window.location.href+'';
@@ -253,7 +405,6 @@ $(document).ready( () => {
         qrbox: {width: 150, height: 150},
                 rememberLastUsedCamera: false,
         });
-
 
     /* ----------------- start up navigation -----------------*/    
     /* controls what gets revealed when the page is ready     */
@@ -298,15 +449,25 @@ $(document).ready( () => {
     $('#link-logout').click( () => {
         // First ... remove userid from localstorage
         localStorage.removeItem("userid");
-        // Now force the page to refresh
-        window.location = "./index.html";
+        // Hide all content wrappers
+        $(".content-wrapper").hide();
+        // Show login form
+        $("#div-login").show();
+        // Reset secured elements
+        $(".secured").removeClass("unlocked");
+        $(".secured").addClass("locked");
     });
 
     $('#btnLogout').click( () => {
         // First ... remove userid from localstorage
         localStorage.removeItem("userid");
-        // Now force the page to refresh
-        window.location = "./index.html";
+        // Hide all content wrappers
+        $(".content-wrapper").hide();
+        // Show login form
+        $("#div-login").show();
+        // Reset secured elements
+        $(".secured").removeClass("unlocked");
+        $(".secured").addClass("locked");
     });
 
     $('#btnPlaceholder').click( () => {
@@ -348,7 +509,8 @@ $(document).ready( () => {
 
     $('#link-home').click( () => {
         $(".content-wrapper").hide();  
-        $("#div-clientlist").show();
+        $("#div-favorites").show();
+        favoritesListController();
     });
 
     $('#btnChoose').click( () => {
@@ -360,6 +522,21 @@ $(document).ready( () => {
 
     $('#btnReset').click( () => {
         resetController();
+    });
+
+    // Sign Up
+    $('#btnShowSignUp').click( () => {
+        $('.content-wrapper').hide();
+        $('#div-signup').show();
+    });
+
+    $('btnBackToLogin').click(() => {
+        $('.content-wrapper').hide();
+        $('#div-login').show();
+    });
+
+    $('#btnSignUp').click( () => {
+        signUpController();
     });
 
     function filterByGenre() {
@@ -401,5 +578,24 @@ $(document).ready( () => {
     // Add event listeners
     $('#genre-select').change(filterByGenre);
     $('#sort-select').change(updateSorting);
+
+    // Add click handler for the Add to Favorites button
+    $('#btnAddFavorites').click( () => {
+        $(".content-wrapper").hide();  
+        $("#div-movielist").show();
+        moviesListController();
+    });
+
+    // Add click handler for removing favorites
+    $(document).on('click', '.remove-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        removeFromFavorites(movieId);
+    });
+
+    // Add click handler for adding favorites from the movies list
+    $(document).on('click', '.add-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        addToFavorites(movieId);
+    });
 
 }); /* end the document ready event*/
