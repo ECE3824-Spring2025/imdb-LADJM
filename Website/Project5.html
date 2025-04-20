@@ -97,21 +97,18 @@
         <div class="col-md-8 content-wrapper " id="div-signup" style="display: none;">
             <h1>Create New Account</h1>
             <form id='form-signup'>
+                <label for="signup-username">Username:</label>
+                <input type="text" name="username" id="signup-username" class="form-control" required>
+                
                 <label for="signup-email">Email:</label>
                 <input type="email" name="email" id="signup-email" class="form-control" required>
                 
                 <label for="signup-password">Password:</label>
                 <input type="password" name="password" id="signup-password" class="form-control" required>
                 
-                <label for="signup-firstname">First Name:</label>
-                <input type="text" name="firstname" id="signup-firstname" class="form-control" required>
-                
-                <label for="signup-lastname">Last Name:</label>
-                <input type="text" name="lastname" id="signup-lastname" class="form-control" required>
-                
                 <br>
                 <div class="text-center">
-                    <input type="button" value="Create Account" id="btnCreateAccount" class="btn btn-primary" style="font-size:2em;width:100%;">
+                    <input type="button" value="Create Account" id="btnSignUp" class="btn btn-primary" style="font-size:2em;width:100%;">
                 </div>
                 <br>
                 <div class="text-center">
@@ -122,28 +119,22 @@
             </form>
         </div>
 
-        <!-- New Sign Up -->
-         <div class="col-md-8 content-wrapper " id="div-signup" style="display: none;">
-            <form id='form-signup'>
-            <label for="username">User name:</label>
-            <input type="text" name="username" id="signup_username" class="form-control" >
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="signup_email" class="form-control" >
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="signup_password" class="form-control" >
-            <br>
-            <div class="text-center">
-                <input type="button" value="Create Account" id="btnSignUp" class="btn btn-primary" style="font-size:2em;width:100%;" >
-            </div>
-            <div id='signup_message' class="">
-            </div>
-        </form>
-        </div>
-
         <div class="col-md-8 content-wrapper " id="div-favorites" style="display: none;">
             <h1>My Favorite Movies</h1>
             <div id="favorites-list" class="movie-list">
                 <!-- Favorites will be populated here -->
+            </div>
+            <div id="no-favorites" style="display: none;">
+                <p class="text-center">No favorites yet. Start adding some!</p>
+                <div class="text-center">
+                    <button id="btnAddFavorites" class="btn btn-primary">Add Favorites</button>
+                </div>
+            </div>
+            <div id="favorites-login" style="display: none;">
+                <p class="text-center">Please log in to view your favorites.</p>
+                <div class="text-center">
+                    <button id="btnFavoritesLogin" class="btn btn-primary">Log In</button>
+                </div>
             </div>
             <br><br><br>
             <div class="text-center">
@@ -264,16 +255,15 @@
 </div> <!-- container //-->
 
 
-<footer class="footer mt-auto py-3 bg-dark text-white">
+<footer class="footer">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 text-center">
-            &copy; Movies from LADJM
+            <div class="col-12">
+                <p>&copy; Movies from LADJM</p>
             </div>
         </div>
     </div>
 </footer>
-
 
 </body>
 </html>
