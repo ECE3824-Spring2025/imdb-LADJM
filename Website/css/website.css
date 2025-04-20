@@ -25,6 +25,7 @@
     border: 1px solid #ddd;
 }
 
+
 html, body {
     height: 100%;
     margin: 0;
@@ -45,4 +46,5 @@ body {
     width: 100%;
     position: relative;
     bottom: 0;
+
 }
