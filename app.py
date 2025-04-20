@@ -49,7 +49,7 @@ class Rating(db.Model):
 
 # Route to fetch movies with ratings (paginated)
 @app.route('/movies')
-@cache.cached(timeout=600)
+@cache.cached(timeout=60)
 def get_movies():
     try:
         # Get page and per_page parameters from the request (default to page 1 and 30 movies per page)
@@ -88,7 +88,12 @@ def get_movies():
         return jsonify({"error": str(e)}), 500
 
 # Route to render the home page (paginated)
-@app.route('/')
+@app.route('/data')
+@cache.cached(timeout=60)  # cache for 60 seconds
+def get_clients():
+    results = db.session.query("https://cl8tnekaej.execute-api.us-east-1.amazonaws.com/default/Website/clients").all()
+    return jsonify([client.to_dict() for client in results])
+
 def index():
     try:
         page = request.args.get('page', 1, type=int)
@@ -119,7 +124,7 @@ def index():
         return f"An error occurred: {str(e)}", 500
 
 # Function to get top 10 movies by genre (cached)
-@cache.cached(timeout=3600, key_prefix="top_10_by_genre")  # Cache for 1 hour
+@cache.cached(timeout=60, key_prefix="top_10_by_genre")  # Cache for 1 hour
 def get_top_10_by_genre():
     try:
         # Get all unique genres from the database

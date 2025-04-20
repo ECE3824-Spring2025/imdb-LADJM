@@ -25,7 +25,6 @@
     border: 1px solid #ddd;
 }
 
-/* Footer styling */
 html, body {
     height: 100%;
     margin: 0;
@@ -44,6 +43,7 @@ body {
 .footer {
     flex-shrink: 0;
     width: 100%;
+
     text-align: center;
     margin-top: auto;
     padding: 1rem 0;
