@@ -14,32 +14,29 @@ let onScanSuccess = (qrCodeMessage) => {
     console.log(itemcode);
     console.log(name);
     $("html, body").animate({ scrollTop: "0px" });
-}
+};
 
 let onScanError = (errorMessage) => {
     // Error handling for scanner
-
-}
+};
 
 let startCamera = async () => {
     await html5QrcodeScanner.render(onScanSuccess, onScanError);
     await $("#reader").show();
-}
+};
 
 let stopCamera = async () => {
     await html5QrcodeScanner.clear();
     await $("#reader").hide();
-}
+};
 
-
-let checkOutButtonController = (x)=>{
-
+let checkOutButtonController = (x) => {
     $("#scanclientid").val(x);
     $(".content-wrapper").hide();
     $("#div-Scan").show();
     saveLastSection("#div-Scan");
     startCamera();
-}
+};
 
 let scanController = () => {
     let userId = $("#scanuserid").val();
@@ -68,54 +65,23 @@ let scanController = () => {
                 $('#message-scan').removeClass();
                 $('#div-scan').hide();
                 $('#div-confirm').show();        
-
+            }
         },
         error: (data) => {
             console.log(data);
+            $('#message-scan').html("Server error. Please try again.").addClass("alert alert-danger text-center");
         }
     });
     $("html, body").animate({ scrollTop: "0px" });
 };
 
-
-    let moviesListController = () => {
-        $('#movie-list').html(""); // Clear previous content
+let moviesListController = () => {
+    $('#movie-list').html(""); // Clear previous content
     
-        $.ajax({
-            "url": endpoint01 + "/movies",
-            "method": "GET",
-            "success": (results) => {
-                console.log(results);
-                if (results.length === 0) {
-                    $('#movie-list').html("<p>No movies found.</p>");
-                } else {
-                    results.forEach(movie => {
-                        let movieCard = `
-                            <div class="movie-card">
-                                <div class="movie-details">
-                                    <h2>${movie.primaryTitle}</h2>
-                                    <p><strong>Year:</strong> ${movie.startYear}</p>
-                                    <p><strong>Genre:</strong> ${movie.genres}</p>
-                                    <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                    <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
-                                </div>
-                            </div>`;
-                        $('#movie-list').append(movieCard);
-                    });
-                }
-            },
-            "error": (error) => {
-                console.error(error);
-                $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
-            }
-        });
-    };
-
-
     $.ajax({
-        "url": endpoint01 + "/movies",
-        "method": "GET",
-        "success": (results) => {
+        url: endpoint01 + "/movies",
+        method: "GET",
+        success: (results) => {
             console.log(results);
             if (results.length === 0) {
                 $('#movie-list').html("<p>No movies found.</p>");
@@ -128,15 +94,14 @@ let scanController = () => {
                                 <p><strong>Year:</strong> ${movie.startYear}</p>
                                 <p><strong>Genre:</strong> ${movie.genres}</p>
                                 <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                                <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
                             </div>
                         </div>`;
                     $('#movie-list').append(movieCard);
                 });
             }
         },
-
-        "error": (error) => {
-
+        error: (error) => {
             console.error(error);
             $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
         }
@@ -165,32 +130,30 @@ function loadMovies(genre = '', sort = 'rating') {
 
 let clientListController = () => {
     $('#table-clients').html("<tr> <th>Client Name</th>  <th>Options</th>  </tr>");
-
     $('#message-clientlist').html("");
     $('#message-clientlist').removeClass();
 
     $.ajax({
-        "url": endpoint01 + "/clients",
-        "method": "GET",
-        "success": (results) => {
+        url: endpoint01 + "/clients",
+        method: "GET",
+        success: (results) => {
             console.log(results);
-            for(let i=0; i< results.length;i++){
+            for(let i = 0; i < results.length; i++) {
                 let clientname = results[i]['lastname'] + ", " + results[i]['firstname'];
                 let clientid = results[i]['clientid'];
-
                 let txttablerow = `<tr>
                     <td>${clientname}</td>
                     <td><input type="button" onclick="checkOutButtonController(${clientid})" class="btn btn-primary" value="Check Out"></td>
                 </tr>`;
                 $('#table-clients').append(txttablerow);
-            });
+            }
         },
         error: (data) => {
             console.log(data);
             $('#message-scan').html("Scan failed. Try again.").addClass("alert alert-danger");
         }
     });
-}
+};
 
 let loginController = () => {
     $('#login_message').html("");
@@ -198,7 +161,7 @@ let loginController = () => {
 
     let username = $("#username").val();
     let password = $("#password").val();
-    if (username == "" || password == ""){
+    if (username == "" || password == "") {
         $('#login_message').html('The user name and password are both required.');
         $('#login_message').addClass("alert alert-danger text-center");
         return;
@@ -218,80 +181,74 @@ let loginController = () => {
                 $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
                 localStorage.userid = results[0]["userid"];
-       
                 $('#login_message').html('');
                 $('#login_message').removeClass();
                 $('.secured').removeClass('locked');
                 $('.secured').addClass('unlocked');
                 $('#div-login').hide();
                 $('#div-clientlist').show();
-
                 clientListController();
                 $("#scanuserid").val(localStorage.userid);
             }
         },
         error: (data) => {
             console.log(data);
+            $('#login_message').html("Server error. Please try again.").addClass("alert alert-danger text-center");
         }
     });
-
+};
 
 let signUpController = () => {
-    // Clear any previous messages
     $('#signup_message').html("");
     $('#signup_message').removeClass();
-
-    // Get form values
+    
     let username = $("#signup-username").val();
     let email = $("#signup-email").val();
     let password = $("#signup-password").val();
-
-    // Basic validation
+    
     if (!username || !email || !password) {
         $('#signup_message').html('All fields are required.');
         $('#signup_message').addClass("alert alert-danger text-center");
         return;
     }
-
-    // Serialize the form data
-    let the_serialized_data = $("#form-signup").serialize();
-    console.log(the_serialized_data); // Best practice
-
-    // Make the AJAX call to create the account
+    
+    let userData = {
+        username: username,
+        email: email,
+        password: password
+    };
+    
     $.ajax({
-        "url": endpoint01 + "/signup",
-        "method": "POST",
-        "data": the_serialized_data,
-        "success": (results) => {
+        url: endpoint01 + "/signup",
+        method: "POST",
+        data: userData,
+        success: (results) => {
             console.log(results);
-            if (results.error) {
-                $('#signup_message').html(results.error);
-                $('#signup_message').addClass("alert alert-danger text-center");
-            } else {
+            if (results.success) {
                 $('#signup_message').html("Account created successfully! Please log in.");
                 $('#signup_message').addClass("alert alert-success text-center");
-                // Switch back to login form after a short delay
                 setTimeout(() => {
-                    $(".content-wrapper").hide();
+                    $("#div-signup").hide();
                     $("#div-login").show();
                 }, 2000);
+            } else {
+                $('#signup_message').html(results.message || "Signup failed. Please try again.");
+                $('#signup_message').addClass("alert alert-danger text-center");
             }
         },
-        "error": (data) => {
-            console.log(data);
-            $('#signup_message').html("Error creating account. Please try again.");
+        error: (error) => {
+            console.log(error);
+            $('#signup_message').html("Error connecting to server. Please try again.");
             $('#signup_message').addClass("alert alert-danger text-center");
         }
     });
 };
 
 let favoritesController = () => {
-    // Clear any previous content
     $('#favorites-list').empty();
     $('#no-favorites').hide();
     $('#favorites-login').hide();
 
-    // Check if user is logged in
     if (!localStorage.userid) {
         $('#favorites-login').show();
         return;
@@ -299,10 +256,10 @@ let favoritesController = () => {
 
     // Make AJAX call to get user's favorites
     $.ajax({
-        "url": endpoint01 + "/favorites",
-        "method": "GET",
-        "data": { userid: localStorage.userid },
-        "success": (results) => {
+        url: endpoint01 + "/favorites",
+        method: "GET",
+        data: { userid: localStorage.userid },
+        success: (results) => {
             console.log(results);
             if (results.length === 0) {
                 $('#no-favorites').show();
@@ -322,218 +279,9 @@ let favoritesController = () => {
                 });
             }
         },
-        "error": (error) => {
+        error: (error) => {
             console.error(error);
             $('#favorites-list').html("<p class='alert alert-danger'>Error loading favorites.</p>");
-        }
-    });
-};
-
-let signUpController = () => {
-    // Clear any previous messages
-    $('#signup_message').html("");
-    $('#signup_message').removeClass();
-
-    // Get form values
-    let username = $("#signup_username").val();
-    let email = $("#signup_email").val();
-    let password = $("#signup_password").val();
-
-    // Validate required fields
-    if (username == "" || email == "" || password == "") {
-        $('#signup_message').html('All fields are required.');
-        $('#signup_message').addClass("alert alert-danger text-center");
-        return; // Quit the function if any field is empty
-    }
-    
-    let the_serialized_data = $("#form-signup").serialize();
-
-    $.ajax({
-        "url": endpoint01 + "/signup",
-        "method": "POST",
-        "data": the_serialized_data,
-        "success": (results) => {
-            if (results.error) {
-                $('signup_message').html(results.error);
-                $('signup_message').addClass("alert alert-danger text-center");
-            } else {
-                $('#signup_message').html('Account created successfully!');
-                $('#signup_message').addClass("alert alert-success text-center");
-                // Clear form fields
-                $('#form-signup')[0].reset();
-                // after 2 seconds, switch back to login page
-                setTimeout(() => {
-                    $('.content-wrapper').hide();
-                    $('#div-login').show();
-                }, 2000);
-            }
-        },
-        "error": (data) => {
-            console.log(data);
-            $('#signup_message').html('An error occurred. Please try again.');
-            $('#signup_message').addClass("alert alert-danger text-center");
-        }
-    });
-}
-
-let favoritesListController = () => {
-    $('#favorites-list').html(""); // Clear previous content
-    
-    $.ajax({
-        "url": endpoint01 + "/favorites",
-        "method": "GET",
-        "data": { userid: localStorage.userid },
-        "success": (results) => {
-            console.log(results);
-            if (results.length === 0) {
-                $('#favorites-list').html(`
-                    <div class="text-center">
-                        <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
-                        <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
-                            <i class="fa fa-plus"></i> Add to Favorites
-                        </button>
-                    </div>
-                `);
-                
-                // Add click handler for the small add to favorites button
-                $('#btnAddFavoritesSmall').click(() => {
-                    $(".content-wrapper").hide();  
-                    $("#div-movielist").show();
-                    moviesListController();
-                });
-            } else {
-                results.forEach(movie => {
-                    let movieCard = `
-                        <div class="movie-card" data-movie-id="${movie.movieId}">
-                            <div class="movie-details">
-                                <h2>${movie.primaryTitle}</h2>
-                                <p><strong>Year:</strong> ${movie.startYear}</p>
-                                <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                <button class="btn btn-danger remove-favorite" data-movie-id="${movie.movieId}">Remove from Favorites</button>
-                            </div>
-                        </div>`;
-                    $('#favorites-list').append(movieCard);
-                });
-            }
-        },
-        "error": (error) => {
-            console.error(error);
-            $('#favorites-list').html(`
-                <div class="text-center">
-                    <p style="font-size: 1.5em; margin: 20px 0;">No favorites yet</p>
-                    <button class="btn btn-primary" id="btnAddFavoritesSmall" style="font-size: 1.2em; padding: 10px 20px;">
-                        <i class="fa fa-plus"></i> Add to Favorites
-                    </button>
-                </div>
-            `);
-            
-            // Add click handler for the small add to favorites button
-            $('#btnAddFavoritesSmall').click(() => {
-                $(".content-wrapper").hide();  
-                $("#div-movielist").show();
-                moviesListController();
-            });
-        }
-    });
-};
-
-let addToFavorites = (movieId) => {
-    $.ajax({
-        "url": endpoint01 + "/addfavorite",
-        "method": "POST",
-        "data": {
-            userid: localStorage.userid,
-            movieId: movieId
-        },
-        "success": (results) => {
-            if (results.success) {
-                favoritesListController(); // Refresh the favorites list
-            } else {
-                alert("Failed to add movie to favorites");
-            }
-        },
-        "error": (error) => {
-            console.error(error);
-            alert("Error adding movie to favorites");
-        }
-    });
-};
-
-let removeFromFavorites = (movieId) => {
-    $.ajax({
-        "url": endpoint01 + "/removefavorite",
-        "method": "POST",
-        "data": {
-            userid: localStorage.userid,
-            movieId: movieId
-        },
-        "success": (results) => {
-            if (results.success) {
-                favoritesListController(); // Refresh the favorites list
-            } else {
-                alert("Failed to remove movie from favorites");
-            }
-        },
-        "error": (error) => {
-            console.error(error);
-            alert("Error removing movie from favorites");
-        }
-    });
-};
-
-    let email = $("#signup-email").val();
-    let password = $("#signup-password").val();
-    let firstname = $("#signup-firstname").val();
-    let lastname = $("#signup-lastname").val();
-
-    if (!email || !password || !firstname || !lastname) {
-        $('#signup_message').html('All fields are required.');
-        $('#signup_message').addClass("alert alert-danger text-center");
-        return;
-    }
-
-    if (!email.includes('@') || !email.includes('.')) {
-        $('#signup_message').html('Please enter a valid email address.');
-        $('#signup_message').addClass("alert alert-danger text-center");
-        return;
-    }
-
-    let userData = {
-        email: email,
-        password: password,
-        firstname: firstname,
-        lastname: lastname
-    };
-
-    $.ajax({
-        "url": endpoint01 + "/signup",
-        "method": "POST",
-        "data": userData,
-        "success": (results) => {
-            console.log(results);
-            if (results.success) {
-                $('#signup_message').html("Account created successfully! Please log in.");
-                $('#signup_message').addClass("alert alert-success text-center");
-                
-                $("#signup-email").val("");
-                $("#signup-password").val("");
-                $("#signup-firstname").val("");
-                $("#signup-lastname").val("");
-                
-                setTimeout(() => {
-                    $("#div-signup").hide();
-                    $("#div-login").show();
-                }, 2000);
-            } else {
-                $('#signup_message').html(results.message || "Signup failed. Please try again.");
-                $('#signup_message').addClass("alert alert-danger text-center");
-            }
-        },
-        "error": (error) => {
-            console.log(error);
-            $('#signup_message').html("Error connecting to server. Please try again.");
-            $('#signup_message').addClass("alert alert-danger text-center");
         }
     });
 };
@@ -558,6 +306,40 @@ function restoreLastSection() {
     return false;
 }
 
+function filterByGenre() {
+    const genre = $('#genre-select').val();
+    $('.movie-card').each(function() {
+        const cardGenres = $(this).find('p:contains("Genre:")').text().split(': ')[1];
+        if (!genre || cardGenres.includes(genre)) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+}
+
+function updateSorting() {
+    const sortBy = $('#sort-select').val();
+    const $container = $('#movie-list');
+    const $items = $('.movie-card').get();
+    
+    $items.sort((a, b) => {
+        const aValue = sortBy === 'rating' ? 
+            parseFloat($(a).find('p:contains("Rating:")').text().split(' ')[1]) :
+            parseInt($(a).find('p:contains("votes")').text().match(/\d+/)[0]);
+            
+        const bValue = sortBy === 'rating' ? 
+            parseFloat($(b).find('p:contains("Rating:")').text().split(' ')[1]) :
+            parseInt($(b).find('p:contains("votes")').text().match(/\d+/)[0]);
+        
+        return bValue - aValue;
+    });
+    
+    $.each($items, (i, item) => {
+        $container.append(item);
+    });
+}
+
 /* Document Ready */
 $(document).ready(() => {
     loadMovies();
@@ -570,18 +352,8 @@ $(document).ready(() => {
     html5QrcodeScanner = new Html5QrcodeScanner("reader", {
         fps: 10,
         qrbox: {width: 150, height: 150},
-                rememberLastUsedCamera: false,
-        });
-
-    /* ----------------- start up navigation -----------------*/    
-    if (localStorage.userid){
-        $("#div-clientlist").show()
-        clientListController();
-        $(".secured").removeClass("locked");        
-        $(".secured").addClass("unlocked");
-        $("#scanuserid").val(localStorage.userid);
-    }
-    else {
+        rememberLastUsedCamera: false,
+    });
 
     if (localStorage.userid) {
         $(".secured").removeClass("locked").addClass("unlocked");
@@ -596,21 +368,19 @@ $(document).ready(() => {
         localStorage.removeItem("lastSection");
     }
 
-    /* ------------------  basic navigation -----------------*/
-    $('.nav-link').click( () => {
+    $('.nav-link').click(() => {
         $("html, body").animate({ scrollTop: "0px" });
         $(".navbar-collapse").collapse('hide');
     });
 
     $('#genre-select, #sort-select').change(() => {
-
         loadMovies(
             $('#genre-select').val(),
-            $('#signup-select').val()
+            $('#sort-select').val()
         );
     });
 
-    $('#btnLogin').click( () => {
+    $('#btnLogin').click(() => {
         loginController();
     });
 
@@ -621,12 +391,10 @@ $(document).ready(() => {
         localStorage.removeItem("userid");
         // Hide all content wrappers and show login
         $(".content-wrapper").hide();
-
         $("#div-login").show();
         // Reset secured elements
         $(".secured").removeClass("unlocked");
         $(".secured").addClass("locked");
-
     });
 
     $('#btnLogout').click(() => {
@@ -634,17 +402,14 @@ $(document).ready(() => {
         localStorage.removeItem("userid");
         // Hide all content wrappers and show login
         $(".content-wrapper").hide();
-
         $("#div-login").show();
         // Reset secured elements
         $(".secured").removeClass("unlocked");
         $(".secured").addClass("locked");
-
     });
 
-    $('#btnPlaceholder').click( () => {
+    $('#btnPlaceholder').click(() => {
         $(".content-wrapper").hide();  
-
         $("#div-Scan").show();
         saveLastSection("#div-Scan");
     });
@@ -669,15 +434,13 @@ $(document).ready(() => {
         moviesListController();
     });
 
-
-    $('#link-home').click( () => {
+    $('#link-home').click(() => {
         $(".content-wrapper").hide();  
         $("#div-favorites").show();
         favoritesController();
-
     });
 
-    $('#btnChoose').click( () => {
+    $('#btnChoose').click(() => {
         $("#btnChoose").hide();    
         stopCamera();
         $("#btnNext").show();
@@ -686,160 +449,36 @@ $(document).ready(() => {
 
     $('#btnReset').click(() => resetController());
 
-    $('#genre-select').change(() => filterByGenre());
-    $('#sort-select').change(() => updateSorting());
-
-    // Show signup form when link is clicked
-    $('#link-signup').click(() => {
-        $("#div-login").hide();
-        $("#div-signup").show();
-    });
-
-    // Show login form when link is clicked
-    $('#link-back-to-login').click(() => {
-        $("#div-signup").hide();
-        $("#div-login").show();
-    });
-
-    // Handle create account button click
-    $('#btnCreateAccount').click(() => {
-        signupController();
-    });
-
-    // Sign Up
-    $('#btnShowSignUp').click( () => {
-        $('.content-wrapper').hide();
-        $('#div-signup').show();
-    });
-
-    $('btnBackToLogin').click(() => {
-        $('.content-wrapper').hide();
-        $('#div-login').show();
-    });
-
-    $('#btnSignUp').click( () => {
-        signUpController();
-    });
-
-    function filterByGenre() {
-        const genre = $('#genre-select').val();
-        $('.movie-card').each(function () {
-            const cardGenres = $(this).find('p:contains("Genre:")').text().split(': ')[1];
-            $(this).toggle(!genre || cardGenres.includes(genre));
-        });
-    }
-
-    function updateSorting() {
-        const sortBy = $('#sort-select').val();
-        const $container = $('#movie-list');
-        const $items = $('.movie-card').get();
-
-        $items.sort((a, b) => {
-            const aValue = sortBy === 'rating' ? 
-
-                parseFloat($(a).find('p:contains("Rating:")').text().split(' ')[1]) :
-                parseInt($(a).find('p:contains("votes")').text().match(/\d+/)[0]);
-
-            const bValue = sortBy === 'rating' ?
-                parseFloat($(b).find('p:contains("Rating:")').text().split(' ')[1]) :
-                parseInt($(b).find('p:contains("votes")').text().match(/\d+/)[0]);
-
-            return bValue - aValue;
-        });
-
-        $.each($items, (i, item) => {
-            $container.append(item);
-        });
-    }
-
-    
     $('#genre-select').change(filterByGenre);
     $('#sort-select').change(updateSorting);
-});
 
-});
-
-    // Add click handler for the Add to Favorites button
-    $('#btnAddFavorites').click( () => {
-        $(".content-wrapper").hide();  
-        $("#div-movielist").show();
-        moviesListController();
-    });
-
-    // Add click handler for removing favorites
-    $(document).on('click', '.remove-favorite', function() {
-        let movieId = $(this).data('movie-id');
-        removeFromFavorites(movieId);
-    });
-
-    // Add click handler for adding favorites from the movies list
-    $(document).on('click', '.add-favorite', function() {
-        let movieId = $(this).data('movie-id');
-        addToFavorites(movieId);
-    });
-
-}); /* end the document ready event*/
-
-    // Show signup form when signup button is clicked
     $('#btnShowSignUp').click(() => {
         $(".content-wrapper").hide();
         $("#div-signup").show();
     });
 
-    // Handle signup form submission
     $('#btnSignUp').click(() => {
         signUpController();
     });
 
-    // Handle back to login link
     $('#link-back-to-login').click(() => {
         $(".content-wrapper").hide();
         $("#div-login").show();
     });
 
-    // Handle favorites link click
-    $('#link-home').click(() => {
-        $(".content-wrapper").hide();
-        $("#div-favorites").show();
-        favoritesController();
-    });
-
-    // Handle add favorites button click
     $('#btnAddFavorites').click(() => {
-        $(".content-wrapper").hide();
+        $(".content-wrapper").hide();  
         $("#div-movielist").show();
         moviesListController();
     });
 
-    // Handle favorites login button click
-    $('#btnFavoritesLogin').click(() => {
-        $(".content-wrapper").hide();
-        $("#div-login").show();
+    $(document).on('click', '.remove-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        removeFromFavorites(movieId);
     });
 
-    // Handle remove from favorites
-    $(document).on('click', '.btn-remove-favorite', function() {
-        let movieCard = $(this).closest('.movie-card');
-        let movieId = movieCard.data('movie-id');
-        
-        $.ajax({
-            "url": endpoint01 + "/favorites/remove",
-            "method": "POST",
-            "data": {
-                userid: localStorage.userid,
-                movieId: movieId
-            },
-            "success": (results) => {
-                movieCard.remove();
-                if ($('#favorites-list').children().length === 0) {
-                    $('#no-favorites').show();
-                }
-            },
-            "error": (error) => {
-                console.error(error);
-                alert('Error removing movie from favorites');
-            }
-        });
+    $(document).on('click', '.add-favorite', function() {
+        let movieId = $(this).data('movie-id');
+        addToFavorites(movieId);
     });
-
-}); /* end the document ready event*/
+});
