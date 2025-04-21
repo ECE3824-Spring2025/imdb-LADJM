@@ -342,6 +342,9 @@ function updateSorting() {
 
 /* Document Ready */
 $(document).ready(() => {
+    // [ADD THIS AT THE VERY BEGINNING]
+    // Clear any existing user session on page load if you want to force logout
+    // localStorage.removeItem("userid"); // Uncomment if you want to force logout on every page load
     loadMovies();
 
     let loc = window.location.href+'';
@@ -355,6 +358,7 @@ $(document).ready(() => {
         rememberLastUsedCamera: false,
     });
 
+    // [MODIFY THIS SECTION TO BE MORE EXPLICIT]
     if (localStorage.userid) {
         $(".secured").removeClass("locked").addClass("unlocked");
         if (!restoreLastSection()) {
@@ -363,9 +367,12 @@ $(document).ready(() => {
             clientListController();
         }
     } else {
+        // [ENHANCE THIS ELSE BLOCK]
+        localStorage.removeItem("userid"); // Clear any residual data
+        localStorage.removeItem("lastSection"); // Clear navigation history
+        $(".content-wrapper").hide();
         $("#div-login").show();
         $(".secured").removeClass("unlocked").addClass("locked");
-        localStorage.removeItem("lastSection");
     }
 
     $('.nav-link').click(() => {
