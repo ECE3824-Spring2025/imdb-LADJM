@@ -421,7 +421,7 @@ $(document).ready(() => {
         saveLastSection("#div-confirm");
     });
 
-    $('#btnHome, #btnHome2, #btnHome3, #link-home').click(() => {
+    $('#btnHome, #btnHome2, #btnHome3').click(() => {
         $(".content-wrapper").hide();
         $("#div-clientlist").show();
         saveLastSection("#div-clientlist");
@@ -480,5 +480,10 @@ $(document).ready(() => {
     $(document).on('click', '.add-favorite', function() {
         let movieId = $(this).data('movie-id');
         addToFavorites(movieId);
+    });
+
+    $('#btnFavoritesLogin').click(() => {
+        $(".content-wrapper").hide();
+        $("#div-login").show();
     });
 });
