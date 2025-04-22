@@ -168,19 +168,16 @@ let loginController = () => {
     }
   
     let the_serialized_data = $("#form-login").serialize();
-    console.log(the_serialized_data);
+    console.log("Serialized Data:", the_serialized_data);  // Log the serialized data
 
     $.ajax({
         url: endpoint01 + "/auth",
         method: "POST",
         data: the_serialized_data,
         success: (results) => {
-            console.log(results);
-            if (results.length == 0) {
-                localStorage.removeItem("userid");
-                $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
-            } else {
-                localStorage.userid = results[0]["userid"];
+            console.log("Login Response:", results);  // Log the API response
+            if (results.success && results.userid) {
+                localStorage.userid = results.userid;  // Store the user ID in localStorage
                 $('#login_message').html('');
                 $('#login_message').removeClass();
                 $('.secured').removeClass('locked');
@@ -189,14 +186,20 @@ let loginController = () => {
                 $('#div-clientlist').show();
                 clientListController();
                 $("#scanuserid").val(localStorage.userid);
+            } else {
+                localStorage.removeItem("userid");
+                $('#login_message').html("Login Failed. Please check your credentials and try again.");
+                $('#login_message').addClass("alert alert-danger text-center");
             }
         },
         error: (data) => {
-            console.log(data);
+            console.log("Login Error:", data);  // Log any errors
             $('#login_message').html("Server error. Please try again.").addClass("alert alert-danger text-center");
         }
     });
 };
+
+
 
 let signUpController = () => {
     $('#signup_message').html("");
@@ -231,6 +234,9 @@ let signUpController = () => {
                     $("#div-signup").hide();
                     $("#div-login").show();
                 }, 2000);
+            } else if (results.message === "Username already exists") {
+                $('#signup_message').html("This username is already taken. Please choose another one.");
+                $('#signup_message').addClass("alert alert-danger text-center");
             } else {
                 $('#signup_message').html(results.message || "Signup failed. Please try again.");
                 $('#signup_message').addClass("alert alert-danger text-center");
