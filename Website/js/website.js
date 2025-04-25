@@ -114,17 +114,40 @@ function loadMovies(genre = '', sort = 'rating') {
         url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
         method: "GET",
         success: (results) => {
+            console.log('API Response:', results); // Debugging line
             $('#movie-list').empty();
+            
+            if (!results || results.length === 0) {
+                $('#movie-list').html('<div class="alert alert-info">No movies found.</div>');
+                return;
+            }
+            
             results.forEach(movie => {
+                // Safely handle potentially missing properties
+                const title = movie.primaryTitle || movie.title || 'Unknown Title';
+                const year = movie.startYear || movie.year || 'Unknown Year';
+                const genres = movie.genres || 'Unknown Genre';
+                const rating = movie.averageRating || movie.rating || 'N/A';
+                const votes = movie.numVotes || movie.votes || 'N/A';
+                const movieId = movie.movie_id || movie.id || '';
+                
                 $('#movie-list').append(`
                     <div class="movie-card">
-                        <h2>${movie.primaryTitle}</h2>
-                        <p><strong>Year:</strong> ${movie.startYear}</p>
-                        <p><strong>Genre:</strong> ${movie.genres}</p>
-                        <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                        <h2>${title}</h2>
+                        <p><strong>Year:</strong> ${year}</p>
+                        <p><strong>Genre:</strong> ${genres}</p>
+                        <p><strong>Rating:</strong> ${rating} (${votes} votes)</p>
+                        <button class="btn btn-primary btn-add-favorite" 
+                                data-movie-id="${movieId}">
+                            Add to Favorites
+                        </button>
                     </div>
                 `);
             });
+        },
+        error: (error) => {
+            console.error('Error loading movies:', error);
+            $('#movie-list').html('<div class="alert alert-danger">Error loading movies. Please try again.</div>');
         }
     });
 }
@@ -501,17 +524,45 @@ $(document).ready(() => {
         moviesListController();
     });
 
-    $(document).on('click', '.btn-remove-favorite', function() {
-        let movieId = $(this).data('movie-id'); // Changed from item-id
-        removeFromFavorites(movieId);
+    $(document).on("click", ".btn-add-favorite", function () {
+        const movieId = $(this).data("movie-id");
+        $.ajax({
+            url: endpoint01 + "/addfavorite",
+            method: "POST",
+            data: {
+                username: localStorage.username,
+                movie_id: movieId
+            },
+            success: (res) => {
+                console.log("Added to favorites:", res);
+                alert("Movie added to favorites!");
+                favoritesController(); // refresh favorite list if visible
+            },
+            error: (err) => {
+                console.error("Add favorite failed", err);
+                alert("Failed to add to favorites.");
+            }
+        });
     });
-
-    $(document).on('click', '.add-favorite', function() {
-        let movieId = $(this).data('item-id');
-        addToFavorites(movieId);
-    });
-    $('#btnFavoritesLogin').click(() => {
-        $(".content-wrapper").hide();
-        $("#div-login").show();
-    });
+    
+    $(document).on("click", ".btn-remove-favorite", function () {
+        const movieId = $(this).data("movie-id");
+        $.ajax({
+            url: endpoint01 + "/removefavorite",
+            method: "POST",
+            data: {
+                username: localStorage.username,
+                movie_id: movieId
+            },
+            success: (res) => {
+                console.log("Removed from favorites:", res);
+                alert("Movie removed from favorites.");
+                favoritesController(); // refresh favorite list
+            },
+            error: (err) => {
+                console.error("Remove favorite failed", err);
+                alert("Failed to remove from favorites.");
+            }
+        });
+    });    
 });
