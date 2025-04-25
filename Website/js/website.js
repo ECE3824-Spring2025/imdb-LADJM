@@ -354,6 +354,24 @@ function restoreLastSection() {
     return false;
 }
 
+// light mode dark mode
+
+function toggleTheme() {
+    const currentMode = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+    
+    // Switch to the opposite mode
+    if (currentMode === 'dark') {
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+      document.getElementById('theme-toggle').textContent = '🌙'; // Change icon to moon
+    } else {
+      document.body.classList.remove('light-mode');
+      document.body.classList.add('dark-mode');
+      document.getElementById('theme-toggle').textContent = '☀️'; // Change icon to sun
+    }
+  }
+  
+
 /* Document Ready */
 $(document).ready(() => {
     // [ADD THIS AT THE VERY BEGINNING]
