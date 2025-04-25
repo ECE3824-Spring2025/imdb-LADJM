@@ -339,6 +339,20 @@ function updateSorting() {
         $container.append(item);
     });
 }
+// Define this ABOVE your $(document).ready() function
+function saveLastSection(sectionId) {
+    localStorage.setItem("lastSection", sectionId);
+}
+
+function restoreLastSection() {
+    const sectionId = localStorage.getItem("lastSection");
+    if (sectionId) {
+        $(".content-wrapper").hide();
+        $(sectionId).show();
+        return true;
+    }
+    return false;
+}
 
 /* Document Ready */
 $(document).ready(() => {
