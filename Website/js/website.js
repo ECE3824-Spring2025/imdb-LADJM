@@ -87,16 +87,19 @@ let moviesListController = () => {
                 $('#movie-list').html("<p>No movies found.</p>");
             } else {
                 results.forEach(movie => {
-                    let movieCard = `
-                        <div class="movie-card">
-                            <div class="movie-details">
-                                <h2>${movie.primaryTitle}</h2>
-                                <p><strong>Year:</strong> ${movie.startYear}</p>
-                                <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
-                            </div>
-                        </div>`;
+                let movieCard = `
+                    <div class="movie-card">
+                        <div class="movie-details">
+                            <h2>${movie.primaryTitle}</h2>
+                            <p><strong>Year:</strong> ${movie.startYear}</p>
+                            <p><strong>Genre:</strong> ${movie.genres}</p>
+                            <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
+                            <button class="btn btn-success add-favorite" 
+                                    data-item-id="${movie.tconst}"> <!-- Changed to tconst -->
+                                Add to Favorites
+                            </button>
+                        </div>
+                    </div>`;
                     $('#movie-list').append(movieCard);
                 });
             }
@@ -174,17 +177,18 @@ let loginController = () => {
         url: endpoint01 + "/auth",
         method: "POST",
         data: the_serialized_data,
+        // In loginController()
         success: (results) => {
             console.log(results);
             if (results.length == 0) {
-                localStorage.removeItem("userid");
+                localStorage.removeItem("username");
                 $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
-                localStorage.userid = results[0]["userid"];
+                localStorage.username = results[0]["username"]; // Store username
+                localStorage.userid = results[0]["userid"]; // Keep userid if needed elsewhere
                 $('#login_message').html('');
                 $('#login_message').removeClass();
-                $('.secured').removeClass('locked');
-                $('.secured').addClass('unlocked');
+                $('.secured').removeClass('locked').addClass('unlocked');
                 $('#div-login').hide();
                 $('#div-clientlist').show();
                 clientListController();
@@ -244,38 +248,109 @@ let signUpController = () => {
     });
 };
 
+let addFavorite = async (res, body) => {
+    const { username, item_id } = body;
+
+    // Validation
+    if (!username || !item_id) {
+        return formatres(res, { message: "username and item_id are required" }, 400);
+    }
+
+    try {
+        // Check if user exists
+        const [user] = await connection.execute(
+            'SELECT * FROM users WHERE username = ?', 
+            [username]
+        );
+        
+        if (user.length === 0) {
+            return formatres(res, { message: "User not found" }, 404);
+        }
+
+        // Check if movie exists
+        const [movie] = await connection.execute(
+            'SELECT * FROM movies WHERE tconst = ?',
+            [item_id]
+        );
+        
+        if (movie.length === 0) {
+            return formatres(res, { message: "Movie not found" }, 404);
+        }
+
+        // Add to favorites
+        await connection.execute(
+            'INSERT INTO favorites (username, item_id) VALUES (?, ?)',
+            [username, item_id]
+        );
+
+        return formatres(res, { 
+            message: "Favorite added successfully",
+            favorite: { username, item_id }
+        }, 201);
+
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return formatres(res, { message: "Movie is already in favorites" }, 409);
+        }
+        console.error("Database error:", error);
+        return formatres(res, { message: "Database error" }, 500);
+    }
+};
+
+let removeFromFavorites = (movieId) => {
+    $.ajax({
+        url: endpoint01 + "/deletefavorite",
+        method: "DELETE",
+        data: {
+            username: localStorage.username,
+            item_id: movieId
+        },
+        success: (result) => {
+            if (result.message.includes("successfully")) {
+                favoritesController(); // Refresh favorites list
+            } else {
+                alert(result.message);
+            }
+        },
+        error: (error) => {
+            console.error(error);
+            alert("Error removing from favorites");
+        }
+    });
+};
+
 let favoritesController = () => {
     $('#favorites-list').empty();
     $('#no-favorites').hide();
     $('#favorites-login').hide();
 
-    if (!localStorage.userid) {
+    if (!localStorage.username) {
         $('#favorites-login').show();
         return;
     }
 
-    // Make AJAX call to get user's favorites
     $.ajax({
-        url: endpoint01 + "/favorites",
+        url: endpoint01 + "/getfavorites",
         method: "GET",
-        data: { userid: localStorage.userid },
+        data: { username: localStorage.username },
         success: (results) => {
-            console.log(results);
-            if (results.length === 0) {
+            if (results.favorites && results.favorites.length === 0) {
                 $('#no-favorites').show();
-            } else {
-                results.forEach(movie => {
-                    let movieCard = `
-                        <div class="movie-card" data-movie-id="${movie.movieId}">
-                            <div class="movie-details">
-                                <h2>${movie.primaryTitle}</h2>
-                                <p><strong>Year:</strong> ${movie.startYear}</p>
-                                <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                <button class="btn btn-danger btn-remove-favorite">Remove from Favorites</button>
+            } else if (results.favorites) {
+                results.favorites.forEach(item => {
+                    let itemCard = `
+                        <div class="favorite-card" data-item-id="${item.item_id}">
+                            <div class="item-details">
+                                <h3>${item.name}</h3>
+                                <p>${item.description}</p>
+                                <p>Value: $${item.estimatedvalue}</p>
+                                <button class="btn btn-danger btn-remove-favorite" 
+                                        data-item-id="${item.item_id}">
+                                    Remove
+                                </button>
                             </div>
                         </div>`;
-                    $('#favorites-list').append(movieCard);
+                    $('#favorites-list').append(itemCard);
                 });
             }
         },
@@ -493,14 +568,14 @@ $(document).ready(() => {
         moviesListController();
     });
 
-    $(document).on('click', '.remove-favorite', function() {
-        let movieId = $(this).data('movie-id');
-        removeFromFavorites(movieId);
+    $(document).on('click', '.btn-remove-favorite', function() {
+        let itemId = $(this).data('item-id');
+        removeFromFavorites(itemId);
     });
 
     $(document).on('click', '.add-favorite', function() {
-        let movieId = $(this).data('movie-id');
-        addToFavorites(movieId);
+        let itemId = $(this).data('item-id');
+        addToFavorites(itemId);
     });
 
     $('#btnFavoritesLogin').click(() => {
