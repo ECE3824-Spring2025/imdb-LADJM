@@ -161,4 +161,4 @@ def get_top_10_by_genre():
 
 # Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(host=0.0.0.0, debug=True, port=5001)
