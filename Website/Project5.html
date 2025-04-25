@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-    <title>FH Checkout</title>
+    <title>LADJM Movies</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 4 References -->
@@ -26,13 +26,11 @@
 
 <!-- Top Navigation Bar -->
 
-  
-
 <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
     <!-- Logo -->
       <a class ="navbar-brand" href="index.html">
           <img alt="TU Logo" src="/Users/dylanboles/Downloads/Images/Cinimapng.webp" style="width:40px;">
-          &nbsp;&nbsp;FH Checkout
+          &nbsp;&nbsp;LADJM Movies
       </a>
 
     <!-- Toggler Icon for responsiveness -->
@@ -51,7 +49,7 @@
                 <a id="link-movies" class="nav-link" href="#"><i class="fa fa-table"></i> Movies </a>
             </li>
             <li class="nav-item secured">
-                <a id="link-home" class="nav-link" href="#"><i class="fa fa-home"></i> Home </a>
+                <a id="link-home" class="nav-link" href="#"><i class="fa fa-heart"></i> Favorites </a>
             </li>
             <li class="nav-item secured">
                 <a id="link-logout" class="nav-link" href="#"><i class="fa fa-sign-out"></i>Logout</a>
@@ -85,10 +83,60 @@
 				<input type="button" value="Login" id="btnLogin" class="btn btn-primary" style="font-size:2em;width:100%;" >
                 </div>
                 <br>
+                <div class="text-center">
+                  
+                    <input type="button" value="Sign Up" id="btnShowSignUp" class="btn btn-secondary" style="font-size:2em;width:100%;" >
+                </div>
+                <br>
+
                 <div id='login_message' class="">
                 </div>
 			</form>
 		</div>
+
+        <div class="col-md-8 content-wrapper " id="div-favorites" style="display: none;">
+            <h1>My Favorite Movies</h1>
+            <div id="favorites-list" class="movie-list">
+                <!-- Favorites will be populated here -->
+            </div>
+            <div id="no-favorites" style="display: none;">
+                <p class="text-center">No favorites yet. Start adding some!</p>
+                <div class="text-center">
+                    <button id="btnAddFavorites" class="btn btn-primary">Add Favorites</button>
+                </div>
+            </div>
+            <div id="favorites-login" style="display: none;">
+                <p class="text-center">You need to log in to view favorites</p>
+                <div class="text-center">
+                    <button id="btnFavoritesLogin" class="btn btn-primary">Log In</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 content-wrapper " id="div-signup" style="display: none;">
+            <h1>Create New Account</h1>
+            <form id='form-signup'>
+                <label for="signup-email">Email:</label>
+                <input type="email" name="email" id="signup-email" class="form-control" required>
+                
+                <label for="signup-username">Username:</label>
+                <input type="text" name="username" id="signup-username" class="form-control" required>
+                
+                <label for="signup-password">Password:</label>
+                <input type="password" name="password" id="signup-password" class="form-control" required>
+                
+                <br>
+                <div class="text-center">
+                    <input type="button" value="Create Account" id="btnSignUp" class="btn btn-primary" style="font-size:2em;width:100%;">
+                </div>
+                <br>
+                <div class="text-center">
+                    <p>Already have an account? <a href="#" id="link-back-to-login">Log in here</a></p>
+                </div>
+                <div id='signup_message' class="">
+                </div>
+            </form>
+        </div>
 
         <div class="col-md-8 content-wrapper " id="div-clientlist" style="display: none;">
 			<h1>Client List</h1>
@@ -129,7 +177,7 @@
                         <input type="hidden" id="scanitemcode" name="itemcode" value="">
                     </form>
             <div class="text-center">
-                <input type="button" value="Next" id="btnNext" class="btn btn-primary" style="font-size:2em;width:100%;display:none;" >
+                <input type="button" value="Next" id="btnNext" class="btn btn-primary" style="font-size:2em;width:100%;display:none;">
             </div>
             <br>
             <div class="text-center">
@@ -151,7 +199,7 @@
            <br>
            <br>
             <div class="text-center">
-           <input type="button" value="Home" id="btnHome2" class="btn btn-secondary" style="font-size:2em;width:100%;" >
+            <input type="button" value="Home" id="btnHome2" class="btn btn-secondary" style="font-size:2em;width:100%;">
             </div>
             <br>
            <br>
@@ -173,7 +221,6 @@
                         <option value="Romance">Romance</option>
                         <option value="Documentary">Documentary</option>
                         <option value="Animation">Animation</option>
-                        <!-- Add other genres as needed -->
                     </select>
                 </div>
                 
@@ -202,19 +249,16 @@
 
 </div> <!-- container //-->
 
-<br>
-    <div class="container-fluid bg-dark text-white">
+
+<footer class="footer">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12 text-center">
-            &copy; Movies from LADJM
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-				&nbsp; <!-- place holder for additional footer content -->
+            <div class="col-12">
+                <p>&copy; Movies from LADJM</p>
             </div>
         </div>
     </div>
+</footer>
+
 </body>
 </html>
-

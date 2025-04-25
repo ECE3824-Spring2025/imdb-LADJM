@@ -88,15 +88,16 @@ let moviesListController = () => {
             } else {
                 results.forEach(movie => {
                     let movieCard = `
-                        <div class="movie-card">
-                            <div class="movie-details">
-                                <h2>${movie.primaryTitle}</h2>
-                                <p><strong>Year:</strong> ${movie.startYear}</p>
-                                <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                <button class="btn btn-success add-favorite" data-movie-id="${movie.movieId}">Add to Favorites</button>
-                            </div>
-                        </div>`;
+                    <div class="favorite-card" data-movie-id="${movie.movie_id}">
+                        <div class="movie-details">
+                            <h3>${movie.title} (${movie.year})</h3>
+                            <!-- other details -->
+                            <button class="btn btn-danger btn-remove-favorite" 
+                                    data-movie-id="${movie.movie_id}">
+                                Remove from Favorites
+                            </button>
+                        </div>
+                    </div>`;
                     $('#movie-list').append(movieCard);
                 });
             }
@@ -174,17 +175,18 @@ let loginController = () => {
         url: endpoint01 + "/auth",
         method: "POST",
         data: the_serialized_data,
+        // In loginController()
         success: (results) => {
             console.log(results);
             if (results.length == 0) {
-                localStorage.removeItem("userid");
+                localStorage.removeItem("username");
                 $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
-                localStorage.userid = results[0]["userid"];
+                localStorage.username = results[0]["username"]; // Store username
+                localStorage.userid = results[0]["userid"]; // Keep userid if needed elsewhere
                 $('#login_message').html('');
                 $('#login_message').removeClass();
-                $('.secured').removeClass('locked');
-                $('.secured').addClass('unlocked');
+                $('.secured').removeClass('locked').addClass('unlocked');
                 $('#div-login').hide();
                 $('#div-clientlist').show();
                 clientListController();
@@ -244,35 +246,37 @@ let signUpController = () => {
     });
 };
 
+
 let favoritesController = () => {
     $('#favorites-list').empty();
     $('#no-favorites').hide();
     $('#favorites-login').hide();
 
-    if (!localStorage.userid) {
+    if (!localStorage.username) {
         $('#favorites-login').show();
         return;
     }
 
-    // Make AJAX call to get user's favorites
     $.ajax({
-        url: endpoint01 + "/favorites",
+        url: endpoint01 + "/getfavorites",
         method: "GET",
-        data: { userid: localStorage.userid },
+        data: { username: localStorage.username },
         success: (results) => {
-            console.log(results);
-            if (results.length === 0) {
+            if (results.favorites && results.favorites.length === 0) {
                 $('#no-favorites').show();
-            } else {
-                results.forEach(movie => {
+            } else if (results.favorites) {
+                results.favorites.forEach(movie => {
                     let movieCard = `
-                        <div class="movie-card" data-movie-id="${movie.movieId}">
+                        <div class="favorite-card" data-movie-id="${movie.movie_id}">
                             <div class="movie-details">
-                                <h2>${movie.primaryTitle}</h2>
-                                <p><strong>Year:</strong> ${movie.startYear}</p>
+                                <h3>${movie.title} (${movie.year})</h3>
                                 <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.averageRating} (${movie.numVotes} votes)</p>
-                                <button class="btn btn-danger btn-remove-favorite">Remove from Favorites</button>
+                                <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
+                                <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
+                                <button class="btn btn-danger btn-remove-favorite" 
+                                        data-movie-id="${movie.movie_id}">
+                                    Remove from Favorites
+                                </button>
                             </div>
                         </div>`;
                     $('#favorites-list').append(movieCard);
@@ -280,8 +284,12 @@ let favoritesController = () => {
             }
         },
         error: (error) => {
-            console.error(error);
-            $('#favorites-list').html("<p class='alert alert-danger'>Error loading favorites.</p>");
+            console.error("Error loading favorites:", error);
+            $('#favorites-list').html(`
+                <div class="alert alert-danger">
+                    Error loading favorites. ${error.responseJSON?.message || ''}
+                </div>
+            `);
         }
     });
 };
@@ -353,8 +361,6 @@ function restoreLastSection() {
     }
     return false;
 }
-
-  
 
 /* Document Ready */
 $(document).ready(() => {
@@ -495,16 +501,15 @@ $(document).ready(() => {
         moviesListController();
     });
 
-    $(document).on('click', '.remove-favorite', function() {
-        let movieId = $(this).data('movie-id');
+    $(document).on('click', '.btn-remove-favorite', function() {
+        let movieId = $(this).data('movie-id'); // Changed from item-id
         removeFromFavorites(movieId);
     });
 
     $(document).on('click', '.add-favorite', function() {
-        let movieId = $(this).data('movie-id');
+        let movieId = $(this).data('item-id');
         addToFavorites(movieId);
     });
-
     $('#btnFavoritesLogin').click(() => {
         $(".content-wrapper").hide();
         $("#div-login").show();
