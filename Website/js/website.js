@@ -88,10 +88,12 @@ let moviesListController = () => {
             } else {
                 results.forEach(movie => {
                     let movieCard = `
-                    <div class="favorite-card" data-movie-id="${movie.movie_id}">
+                    <div class="favorite-card">
                         <div class="movie-details">
                             <h3>${movie.title} (${movie.year})</h3>
-                            <!-- other details -->
+                            <p><strong>Genre:</strong> ${movie.genres}</p>
+                            <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
+                            <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
                             <button class="btn btn-danger btn-remove-favorite" 
                                     data-movie-id="${movie.movie_id}">
                                 Remove from Favorites
@@ -123,14 +125,26 @@ function loadMovies(genre = '', sort = 'rating') {
             }
             
             results.forEach(movie => {
+                // Debug the movie object
+                console.log('Processing movie:', movie);
+                
                 // Safely handle potentially missing properties
                 const title = movie.primaryTitle || movie.title || 'Unknown Title';
                 const year = movie.startYear || movie.year || 'Unknown Year';
                 const genres = movie.genres || 'Unknown Genre';
                 const rating = movie.averageRating || movie.rating || 'N/A';
                 const votes = movie.numVotes || movie.votes || 'N/A';
-                const movieId = movie.movie_id || movie.id || '';
                 
+                // Try different possible ID fields
+                const movieId = movie.tconst || movie.id || movie.movie_id || '';
+                
+                console.log('Movie ID being used:', movieId);
+                
+                if (!movieId) {
+                    console.error('No valid movie ID found for movie:', movie);
+                }
+                
+                // This is the movie card generation code
                 $('#movie-list').append(`
                     <div class="movie-card">
                         <h2>${title}</h2>
@@ -138,7 +152,8 @@ function loadMovies(genre = '', sort = 'rating') {
                         <p><strong>Genre:</strong> ${genres}</p>
                         <p><strong>Rating:</strong> ${rating} (${votes} votes)</p>
                         <button class="btn btn-primary btn-add-favorite" 
-                                data-movie-id="${movieId}">
+                                data-movie-id="${movieId}"
+                                data-title="${title}">
                             Add to Favorites
                         </button>
                     </div>
@@ -289,15 +304,18 @@ let favoritesController = () => {
                 $('#no-favorites').show();
             } else if (results.favorites) {
                 results.favorites.forEach(movie => {
+                    // DEBUG: Log the movie object to ensure it has movie_id
+                    console.log("Movie object:", movie);
+                    
                     let movieCard = `
-                        <div class="favorite-card" data-movie-id="${movie.movie_id}">
+                        <div class="favorite-card">
                             <div class="movie-details">
                                 <h3>${movie.title} (${movie.year})</h3>
                                 <p><strong>Genre:</strong> ${movie.genres}</p>
                                 <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
                                 <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
                                 <button class="btn btn-danger btn-remove-favorite" 
-                                        data-movie-id="${movie.movie_id}">
+                                        data-movie-id="${movie.movie_id || movie.tconst}">
                                     Remove from Favorites
                                 </button>
                             </div>
@@ -316,6 +334,51 @@ let favoritesController = () => {
         }
     });
 };
+
+function displayFavorites(favorites) {
+    const container = $('#favorites-container');
+    container.empty();
+    
+    if (!favorites || favorites.length === 0) {
+        container.html('<p>No favorites yet. Add some movies!</p>');
+        return;
+    }
+
+    favorites.forEach(fav => {
+        const favHtml = `
+            <div class="favorite-item">
+                <h3>${fav.title || 'Untitled'} (${fav.year || 'N/A'})</h3>
+                <p>Genre: ${fav.genres || 'Unknown'}</p>
+                <p>Rating: ${fav.rating || 'N/A'} (${fav.votes || '0'} votes)</p>
+                <p>Added: ${fav.added || 'Unknown date'}</p>
+                <button class="btn-remove-favorite" data-movie-id="${fav.movie_id}">
+                    Remove from Favorites
+                </button>
+            </div>
+        `;
+        container.append(favHtml);
+    });
+}
+
+function loadFavorites() {
+    const username = localStorage.username;
+    if (!username) return;
+
+    $.ajax({
+        url: endpoint01 + "/getfavorites?username=" + username,
+        method: "GET",
+        success: (res) => {
+            if (res.success && res.favorites) {
+                displayFavorites(res.favorites);
+            } else {
+                console.error("Failed to load favorites:", res.message);
+            }
+        },
+        error: (err) => {
+            console.error("Error loading favorites:", err);
+        }
+    });
+}
 
 function restoreLastSection() {
     let sectionId = localStorage.getItem("lastSection");
@@ -524,45 +587,116 @@ $(document).ready(() => {
         moviesListController();
     });
 
-    $(document).on("click", ".btn-add-favorite", function () {
-        const movieId = $(this).data("movie-id");
+    $(document).on("click", ".btn-add-favorite", function() {
+        const title = $(this).attr("data-title") || $(this).data("title");
+        const username = localStorage.username;
+        
+        console.log("Adding favorite:", {
+            title: title,
+            username: username
+        });
+        
+        if (!username) {
+            alert("Please log in to add favorites");
+            return;
+        }
+
+        if (!title) {
+            console.error("Invalid movie title:", title);
+            alert("Invalid movie title");
+            return;
+        }
+    
+        const requestData = {
+            username: username,
+            tconst: title
+        };
+    
+        console.log("Sending request data:", requestData);
+    
         $.ajax({
             url: endpoint01 + "/addfavorite",
             method: "POST",
-            data: {
-                username: localStorage.username,
-                movie_id: movieId
-            },
+            contentType: "application/json",
+            data: requestData,
             success: (res) => {
-                console.log("Added to favorites:", res);
-                alert("Movie added to favorites!");
-                favoritesController(); // refresh favorite list if visible
+                console.log("Success response:", res);
+                alert("Added to favorites!");
             },
             error: (err) => {
-                console.error("Add favorite failed", err);
-                alert("Failed to add to favorites.");
+                console.error("Error adding favorite:", err);
+                console.error("Error status:", err.status);
+                console.error("Error response:", err.responseText);
+                if (err.responseJSON && err.responseJSON.message) {
+                    alert("Error: " + err.responseJSON.message);
+                } else {
+                    alert("Failed to add favorite. Please try again.");
+                }
             }
         });
     });
+
+    $(document).on("click", ".btn-remove-favorite", function() {
+        // Get the movie_id from the button's data attribute
+        const movie_id = $(this).attr("data-movie-id") || $(this).data("movie-id");
+        const username = localStorage.username;
+        
+        console.log("Button element:", this);
+        console.log("All data attributes:", $(this).data());
+        console.log("Removing favorite:", { 
+            movie_id: movie_id,
+            username: username
+        });
+        
+        if (!username) {
+            alert("Please log in to manage favorites");
+            return;
+        }
     
-    $(document).on("click", ".btn-remove-favorite", function () {
-        const movieId = $(this).data("movie-id");
+        if (!movie_id || movie_id === "undefined") {
+            console.error("Invalid movie reference - no movie_id found");
+            console.log("Button HTML:", this.outerHTML);
+            alert("Error: Could not identify movie to remove");
+            return;
+        }
+    
+        if (!confirm("Are you sure you want to remove this favorite?")) {
+            return;
+        }
+    
+        const requestData = {
+            username: username,
+            movie_id: movie_id
+        };
+    
+        console.log("Sending delete request:", requestData);
+    
         $.ajax({
-            url: endpoint01 + "/removefavorite",
-            method: "POST",
-            data: {
-                username: localStorage.username,
-                movie_id: movieId
-            },
+            url: endpoint01 + "/deletefavorite",
+            method: "DELETE",
+            contentType: "application/json", // Ensure this header is set
+            dataType: "json", // Tell jQuery to parse the response as JSON
+            data: JSON.stringify({
+                username: username,
+                movie_id: movie_id
+            }),
             success: (res) => {
-                console.log("Removed from favorites:", res);
-                alert("Movie removed from favorites.");
-                favoritesController(); // refresh favorite list
+                console.log("Delete response:", res);
+                if (res.success) {
+                    alert("Removed from favorites!");
+                    favoritesController(); // Refresh the favorites list
+                } else {
+                    alert("Error: " + (res.message || "Failed to remove favorite"));
+                }
             },
             error: (err) => {
-                console.error("Remove favorite failed", err);
-                alert("Failed to remove from favorites.");
+                console.error("Error removing favorite:", err);
+                console.error("Status:", err.status);
+                console.error("Response:", err.responseJSON || err.responseText);
+                const errorMsg = err.responseJSON?.message || 
+                            "Failed to remove favorite. Please try again.";
+                alert("Error: " + errorMsg);
             }
         });
-    });    
+    });
 });
