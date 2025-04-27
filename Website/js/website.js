@@ -635,7 +635,7 @@ $(document).ready(() => {
             url: endpoint01 + "/addfavorite",
             method: "POST",
             contentType: "application/json",
-            data: requestData,
+            data: JSON.stringify(requestData),
             success: (res) => {
                 console.log("Success response:", res);
                 alert("Added to favorites!");
