@@ -6,19 +6,17 @@
 #### Complete - if task completed 
 
 
-- Figure out New Caching
+- Go to Favorites after logging in <DONE>
 
-- Password encryption
-    - Sign up Button
+- Undefined Movies Bug when you load into movies tab on the first time
 
-- Using SQL Sorting, Make our wesbsite fast and efficient
+- Password Encryption
 
-- Make sure the Users are getting added to users table
-    - SQS Send the new user an email when joining
+- Live Link
 
-- Unit tests if needed
+- Delete from Favorites
 
-- PowerPoint Slides
+- Power Point
 
 ### Extra
 

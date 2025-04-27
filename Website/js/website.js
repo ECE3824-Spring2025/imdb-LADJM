@@ -55,16 +55,26 @@ let scanController = () => {
         url: endpoint01 + "/scancheck",
         method: "POST",
         data: the_serialized_data,
+        // In loginController() success handler
         success: (results) => {
             console.log(results);
             if (results.length == 0) {
-                $('#message-scan').html("Failed. Try again.");
-                $('#message-scan').addClass("alert alert-danger text-center");
+                localStorage.removeItem("username");
+                $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
-                $('#message-scan').html('');
-                $('#message-scan').removeClass();
-                $('#div-scan').hide();
-                $('#div-confirm').show();        
+                localStorage.username = results[0]["username"]; // Store username
+                localStorage.userid = results[0]["userid"]; // Keep userid if needed elsewhere
+                $('#login_message').html('');
+                $('#login_message').removeClass();
+                $('.secured').removeClass('locked').addClass('unlocked');
+                $('#div-login').hide();
+                
+                // CHANGE THIS FROM CLIENTLIST TO FAVORITES
+                $('#div-favorites').show();
+                favoritesController(); // Load favorites
+                saveLastSection("#div-favorites"); // Update last section
+                
+                $("#scanuserid").val(localStorage.userid);
             }
         },
         error: (data) => {
@@ -213,7 +223,6 @@ let loginController = () => {
         url: endpoint01 + "/auth",
         method: "POST",
         data: the_serialized_data,
-        // In loginController()
         success: (results) => {
             console.log(results);
             if (results.length == 0) {
@@ -226,8 +235,12 @@ let loginController = () => {
                 $('#login_message').removeClass();
                 $('.secured').removeClass('locked').addClass('unlocked');
                 $('#div-login').hide();
-                $('#div-clientlist').show();
-                clientListController();
+                
+                // CHANGE THIS FROM CLIENTLIST TO FAVORITES
+                $('#div-favorites').show();
+                favoritesController(); // Load favorites
+                saveLastSection("#div-favorites"); // Update last section
+                
                 $("#scanuserid").val(localStorage.userid);
             }
         },
@@ -388,8 +401,8 @@ function restoreLastSection() {
 
         if (sectionId === "#div-Scan") {
             startCamera();
-        } else if (sectionId === "#div-clientlist") {
-            clientListController();
+        } else if (sectionId === "#div-favorites") {
+            favoritesController();
         } else if (sectionId === "#div-movielist") {
             moviesListController();
         }
@@ -470,14 +483,14 @@ $(document).ready(() => {
     if (localStorage.userid) {
         $(".secured").removeClass("locked").addClass("unlocked");
         if (!restoreLastSection()) {
-            $("#div-clientlist").show();
-            saveLastSection("#div-clientlist");
-            clientListController();
+            // CHANGE THIS DEFAULT FROM CLIENTLIST TO FAVORITES
+            $("#div-favorites").show();
+            favoritesController();
+            saveLastSection("#div-favorites");
         }
     } else {
-        // [ENHANCE THIS ELSE BLOCK]
-        localStorage.removeItem("userid"); // Clear any residual data
-        localStorage.removeItem("lastSection"); // Clear navigation history
+        localStorage.removeItem("userid");
+        localStorage.removeItem("lastSection");
         $(".content-wrapper").hide();
         $("#div-login").show();
         $(".secured").removeClass("unlocked").addClass("locked");
@@ -504,6 +517,7 @@ $(document).ready(() => {
     $('#link-logout').click(() => {
         // First ... remove userid from localstorage
         localStorage.removeItem("userid");
+        localStorage.removeItem("username");
         // Hide all content wrappers and show login
         $(".content-wrapper").hide();
         $("#div-login").show();
@@ -511,10 +525,11 @@ $(document).ready(() => {
         $(".secured").removeClass("unlocked");
         $(".secured").addClass("locked");
     });
-
+    
     $('#btnLogout').click(() => {
         // First ... remove userid from localstorage
         localStorage.removeItem("userid");
+        localStorage.removeItem("username");
         // Hide all content wrappers and show login
         $(".content-wrapper").hide();
         $("#div-login").show();
@@ -538,8 +553,9 @@ $(document).ready(() => {
 
     $('#btnHome, #btnHome2, #btnHome3').click(() => {
         $(".content-wrapper").hide();
-        $("#div-clientlist").show();
-        saveLastSection("#div-clientlist");
+        $("#div-favorites").show();
+        favoritesController();
+        saveLastSection("#div-favorites");
     });
 
     $('#link-movies').click(() => {
@@ -553,6 +569,7 @@ $(document).ready(() => {
         $(".content-wrapper").hide();  
         $("#div-favorites").show();
         favoritesController();
+        saveLastSection("#div-favorites");
     });
 
     $('#btnChoose').click(() => {
