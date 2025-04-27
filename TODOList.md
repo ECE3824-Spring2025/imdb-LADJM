@@ -6,6 +6,8 @@
 #### Complete - if task completed 
 
 
+- Go to Favorites after logging in <DONE>
+
 - Undefined Movies Bug when you load into movies tab on the first time
 
 - Password Encryption
