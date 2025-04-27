@@ -19,7 +19,7 @@
     <script src="js/website.js"></script>
 
     <!-- Link to image for the favicon -->
-    <link rel="icon" href="./image/Cinimapng.webp">
+    <link rel="icon" href="../image/Cinimapng.webp">
 </head>
 
 <body>
@@ -29,7 +29,7 @@
 <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
     <!-- Logo -->
       <a class ="navbar-brand" href="index.html">
-          <img alt="TU Logo" src="./image/Cinimapng.webp" style="width:40px;">
+          <img alt="TU Logo" src="../image/Cinimapng.webp" style="width:40px;">
           &nbsp;&nbsp;LADJM Movies
       </a>
 
@@ -148,6 +148,49 @@
             </div>
             <br>
 		</div>
+
+        <!-- search bar function -->
+        <div class="col-md-8 content-wrapper" id="div-movielist" style="display: none;">
+            <h1>Top Movies/Shows</h1>
+            <br>
+            <!-- Add this search bar container -->
+            <div class="search-container mb-4">
+                <div class="input-group">
+                    <input type="text" id="search-input" class="form-control" placeholder="Search movies...">
+                    <div class="input-group-append">
+                        <button id="search-button" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filters-container">
+                <!-- Your existing filters -->
+                <div class="filter">
+                    <label for="genre-select">Filter by Genre:</label>
+                    <select id="genre-select">
+                        <option value="">All Genres</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Action">Action</option>
+                        <option value="Short">Short</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Documentary">Documentary</option>
+                        <option value="Animation">Animation</option>
+                    </select>
+                </div>
+                
+                <div class="filter">
+                    <label for="sort-select">Sort by:</label>
+                    <select id="sort-select">
+                        <option value="rating">Rating</option>
+                        <option value="votes">Votes</option>
+                    </select>
+                </div>
+                
+                <div id="movie-list"></div>
+            </div>
+        </div>
 
         <div class="col-md-8 content-wrapper " id="div-Scan" style="display: none;">
 			<h1>Scan</h1>

@@ -177,6 +177,93 @@ function loadMovies(genre = '', sort = 'rating') {
     });
 }
 
+// search bar
+// Enhanced loadMovies function with search capability
+function loadMovies(genre = '', sort = 'rating', searchTerm = '') {
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (genre) params.append('genre', genre);
+    if (sort) params.append('sort', sort);
+    if (searchTerm) params.append('q', searchTerm);
+
+    $.ajax({
+        url: `${endpoint01}/movies?${params.toString()}`,
+        method: "GET",
+        success: (results) => {
+            console.log('API Response:', results);
+            $('#movie-list').empty();
+            
+            if (!results || results.length === 0) {
+                $('#movie-list').html('<div class="alert alert-info">No movies found matching your criteria.</div>');
+                return;
+            }
+            
+            results.forEach(movie => {
+                const title = movie.primaryTitle || movie.title || 'Unknown Title';
+                const year = movie.startYear || movie.year || 'Unknown Year';
+                const genres = movie.genres || 'Unknown Genre';
+                const rating = movie.averageRating || movie.rating || 'N/A';
+                const votes = movie.numVotes || movie.votes || 'N/A';
+                const movieId = movie.tconst || movie.id || movie.movie_id || '';
+                
+                $('#movie-list').append(`
+                    <div class="movie-card">
+                        <h2>${title}</h2>
+                        <p><strong>Year:</strong> ${year}</p>
+                        <p><strong>Genre:</strong> ${genres}</p>
+                        <p><strong>Rating:</strong> ${rating} (${votes} votes)</p>
+                        <button class="btn btn-primary btn-add-favorite" 
+                                data-movie-id="${movieId}"
+                                data-title="${title}">
+                            Add to Favorites
+                        </button>
+                    </div>
+                `);
+            });
+        },
+        error: (error) => {
+            console.error('Error loading movies:', error);
+            $('#movie-list').html('<div class="alert alert-danger">Error loading movies. Please try again.</div>');
+        }
+    });
+}
+
+// Search controller function
+function searchController() {
+    const searchTerm = $('#search-input').val().trim();
+    const genre = $('#genre-select').val();
+    const sort = $('#sort-select').val();
+    
+    loadMovies(genre, sort, searchTerm);
+}
+
+// Update your document.ready section to include:
+$(document).ready(() => {
+    // ... existing code ...
+    
+    // Search button click handler
+    $('#search-button').click(searchController);
+    
+    // Search on Enter key
+    $('#search-input').keypress(function(e) {
+        if (e.which === 13) { // Enter key
+            searchController();
+        }
+    });
+    
+    // Update your existing filter change handlers to include search term
+    $('#genre-select, #sort-select').change(() => {
+        const searchTerm = $('#search-input').val().trim();
+        loadMovies(
+            $('#genre-select').val(),
+            $('#sort-select').val(),
+            searchTerm
+        );
+    });
+    
+    // ... rest of your existing code ...
+});
+
 let clientListController = () => {
     $('#table-clients').html("<tr> <th>Client Name</th>  <th>Options</th>  </tr>");
     $('#message-clientlist').html("");
