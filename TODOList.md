@@ -6,19 +6,15 @@
 #### Complete - if task completed 
 
 
-- Figure out New Caching
+- Undefined Movies Bug when you load into movies tab on the first time
 
-- Password encryption
-    - Sign up Button
+- Password Encryption
 
-- Using SQL Sorting, Make our wesbsite fast and efficient
+- Live Link
 
-- Make sure the Users are getting added to users table
-    - SQS Send the new user an email when joining
+- Delete from Favorites
 
-- Unit tests if needed
-
-- PowerPoint Slides
+- Power Point
 
 ### Extra
 
