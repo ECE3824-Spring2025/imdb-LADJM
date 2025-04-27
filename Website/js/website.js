@@ -466,7 +466,12 @@ $(document).ready(() => {
     // [ADD THIS AT THE VERY BEGINNING]
     // Clear any existing user session on page load if you want to force logout
     // localStorage.removeItem("userid"); // Uncomment if you want to force logout on every page load
-    loadMovies();
+    $('#link-movies').click(() => {
+    $(".content-wrapper").hide();
+    $("#div-movielist").show();
+    saveLastSection("#div-movielist");
+    moviesListController();
+    });
 
     let loc = window.location.href+'';
     if (loc.indexOf('http://')==0){
