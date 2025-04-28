@@ -836,11 +836,4 @@ $(document).ready(function() {
         $('#no-favorites').show();
     });
 
-    // Show favorites page when clicking Favorites link
-    $('#link-home').click(() => {
-        $(".content-wrapper").hide();  
-        $("#div-favorites").show();
-        favoritesController();
-        saveLastSection("#div-favorites");
-    });
 });
