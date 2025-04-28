@@ -134,7 +134,6 @@ let moviesListController = (genre = '', sort = 'rating') => {
         }
     });
 };
-
 function loadMovies(genre = '', sort = 'rating') {
     $.ajax({
         url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
