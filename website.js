@@ -85,52 +85,38 @@ let scanController = () => {
     $("html, body").animate({ scrollTop: "0px" });
 };
 
-let moviesListController = (genre = '', sort = 'rating') => {
-    $('#movie-list').html('<div class="text-center">Loading movies...</div>');
+let moviesListController = () => {
+    $('#movie-list').html(""); // Clear previous content
     
-    // Use the same endpoint structure as loadMovies()
     $.ajax({
-        url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
+        url: endpoint01 + "/movies",
         method: "GET",
         success: (results) => {
-            $('#movie-list').empty();
-            
-            if (!results || results.length === 0) {
-                $('#movie-list').html('<div class="alert alert-info">No movies found.</div>');
-                return;
+            console.log(results);
+            if (results.length === 0) {
+                $('#movie-list').html("<p>No movies found.</p>");
+            } else {
+                results.forEach(movie => {
+                    let movieCard = `
+                    <div class="favorite-card">
+                        <div class="movie-details">
+                            <h3>${movie.title} (${movie.year})</h3>
+                            <p><strong>Genre:</strong> ${movie.genres}</p>
+                            <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
+                            <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
+                            <button class="btn btn-danger btn-remove-favorite" 
+                                    data-movie-id="${movie.movie_id}">
+                                Remove from Favorites
+                            </button>
+                        </div>
+                    </div>`;
+                    $('#movie-list').append(movieCard);
+                });
             }
-            
-            results.forEach(movie => {
-                // Consistent property handling with loadMovies()
-                const title = movie.primaryTitle || movie.title || 'Unknown Title';
-                const year = movie.startYear || movie.year || 'Unknown Year';
-                const genres = movie.genres || 'Unknown Genre';
-                const rating = movie.averageRating || movie.rating || 'N/A';
-                const votes = movie.numVotes || movie.votes || 'N/A';
-                const movieId = movie.tconst || movie.id || movie.movie_id || '';
-                
-                $('#movie-list').append(`
-                    <div class="movie-card">
-                        <h2>${title}</h2>
-                        <p><strong>Year:</strong> ${year}</p>
-                        <p><strong>Genre:</strong> ${genres}</p>
-                        <p><strong>Rating:</strong> ${rating} (${votes} votes)</p>
-                        <button class="btn btn-primary btn-add-favorite" 
-                                data-movie-id="${movieId}"
-                                data-title="${title}">
-                            Add to Favorites
-                        </button>
-                    </div>
-                `);
-            });
         },
         error: (error) => {
-            console.error('Error loading movies:', error);
-            $('#movie-list').html(`
-                <div class="alert alert-danger">
-                    Error loading movies. ${error.responseJSON?.message || ''}
-                </div>
-            `);
+            console.error(error);
+            $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
         }
     });
 };
@@ -567,12 +553,7 @@ $(document).ready(() => {
     // [ADD THIS AT THE VERY BEGINNING]
     // Clear any existing user session on page load if you want to force logout
     // localStorage.removeItem("userid"); // Uncomment if you want to force logout on every page load
-    $('#link-movies').click(() => {
-    $(".content-wrapper").hide();
-    $("#div-movielist").show();
-    saveLastSection("#div-movielist");
-    moviesListController();
-    });
+    loadMovies();
 
     let loc = window.location.href+'';
     if (loc.indexOf('http://')==0){
@@ -741,7 +722,7 @@ $(document).ready(() => {
             url: endpoint01 + "/addfavorite",
             method: "POST",
             contentType: "application/json",
-            data: JSON.stringify(requestData),
+            data: requestData,
             success: (res) => {
                 console.log("Success response:", res);
                 alert("Added to favorites!");
