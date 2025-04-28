@@ -134,7 +134,7 @@ let moviesListController = (genre = '', sort = 'rating') => {
         }
     });
 };
-function loadMovies(genre = '', sort = 'rating') {
+function loadMovies(genre = '', sort = 'votes') {
     $.ajax({
         url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
         method: "GET",
@@ -204,14 +204,18 @@ function loadMovies(genre = '', sort = 'rating', searchTerm = '') {
         method: "GET",
         success: (results) => {
             console.log('API Response:', results);
+            let movies = results;
+            if (results.data) movies = results.data;
+            if (results.results) movies = results.results;
+            
             $('#movie-list').empty();
             
-            if (!results || results.length === 0) {
+            if (!movies || movies.length === 0) {
                 $('#movie-list').html('<div class="alert alert-info">No movies found matching your criteria.</div>');
                 return;
             }
             
-            results.forEach(movie => {
+            movies.forEach(movie => {
                 const title = movie.primaryTitle || movie.title || 'Unknown Title';
                 const year = movie.startYear || movie.year || 'Unknown Year';
                 const genres = movie.genres || 'Unknown Genre';
@@ -233,7 +237,7 @@ function loadMovies(genre = '', sort = 'rating', searchTerm = '') {
                     </div>
                 `);
             });
-        },
+        },        
         error: (error) => {
             console.error('Error loading movies:', error);
             $('#movie-list').html('<div class="alert alert-danger">Error loading movies. Please try again.</div>');
