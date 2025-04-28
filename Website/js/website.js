@@ -85,38 +85,52 @@ let scanController = () => {
     $("html, body").animate({ scrollTop: "0px" });
 };
 
-let moviesListController = () => {
-    $('#movie-list').html(""); // Clear previous content
+let moviesListController = (genre = '', sort = 'rating') => {
+    $('#movie-list').html('<div class="text-center">Loading movies...</div>');
     
+    // Use the same endpoint structure as loadMovies()
     $.ajax({
-        url: endpoint01 + "/movies",
+        url: `${endpoint01}/movies?genre=${encodeURIComponent(genre)}&sort=${sort}`,
         method: "GET",
         success: (results) => {
-            console.log(results);
-            if (results.length === 0) {
-                $('#movie-list').html("<p>No movies found.</p>");
-            } else {
-                results.forEach(movie => {
-                    let movieCard = `
-                    <div class="favorite-card">
-                        <div class="movie-details">
-                            <h3>${movie.title} (${movie.year})</h3>
-                            <p><strong>Genre:</strong> ${movie.genres}</p>
-                            <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
-                            <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
-                            <button class="btn btn-danger btn-remove-favorite" 
-                                    data-movie-id="${movie.movie_id}">
-                                Remove from Favorites
-                            </button>
-                        </div>
-                    </div>`;
-                    $('#movie-list').append(movieCard);
-                });
+            $('#movie-list').empty();
+            
+            if (!results || results.length === 0) {
+                $('#movie-list').html('<div class="alert alert-info">No movies found.</div>');
+                return;
             }
+            
+            results.forEach(movie => {
+                // Consistent property handling with loadMovies()
+                const title = movie.primaryTitle || movie.title || 'Unknown Title';
+                const year = movie.startYear || movie.year || 'Unknown Year';
+                const genres = movie.genres || 'Unknown Genre';
+                const rating = movie.averageRating || movie.rating || 'N/A';
+                const votes = movie.numVotes || movie.votes || 'N/A';
+                const movieId = movie.tconst || movie.id || movie.movie_id || '';
+                
+                $('#movie-list').append(`
+                    <div class="movie-card">
+                        <h2>${title}</h2>
+                        <p><strong>Year:</strong> ${year}</p>
+                        <p><strong>Genre:</strong> ${genres}</p>
+                        <p><strong>Rating:</strong> ${rating} (${votes} votes)</p>
+                        <button class="btn btn-primary btn-add-favorite" 
+                                data-movie-id="${movieId}"
+                                data-title="${title}">
+                            Add to Favorites
+                        </button>
+                    </div>
+                `);
+            });
         },
         error: (error) => {
-            console.error(error);
-            $('#movie-list').html("<p class='alert alert-danger'>Error loading movies.</p>");
+            console.error('Error loading movies:', error);
+            $('#movie-list').html(`
+                <div class="alert alert-danger">
+                    Error loading movies. ${error.responseJSON?.message || ''}
+                </div>
+            `);
         }
     });
 };
