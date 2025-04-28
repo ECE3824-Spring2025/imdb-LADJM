@@ -823,3 +823,33 @@ $(document).ready(() => {
         });
     });
 });
+$(document).ready(function() {
+    // Show login page when "Log In" button is clicked on favorites page
+    $('#btnFavoritesLogin').on('click', function() {
+        $('.content-wrapper').hide(); // Hide all pages
+        $('#div-login').show();      // Show login page
+    });
+
+    // Basic login functionality (minimal version)
+    $('#btnLogin').on('click', function() {
+        // For demo purposes - just show favorites page after clicking login
+        $('.content-wrapper').hide();
+        $('#div-favorites').show();
+        
+        // Hide the login prompt and show empty favorites
+        $('#favorites-login').hide();
+        $('#no-favorites').show();
+    });
+
+    // Show favorites page when clicking Favorites link
+    $('#link-home').on('click', function(e) {
+        e.preventDefault();
+        $('.content-wrapper').hide();
+        $('#div-favorites').show();
+        
+        // Show login prompt (since we're not actually checking login status in this minimal version)
+        $('#favorites-login').show();
+        $('#no-favorites').hide();
+        $('#favorites-list').hide();
+    });
+});
