@@ -304,6 +304,7 @@ let clientListController = () => {
     });
 };
 
+// Modified loginController to properly handle favorites after login
 let loginController = () => {
     $('#login_message').html("");
     $('#login_message').removeClass();
@@ -329,17 +330,17 @@ let loginController = () => {
                 localStorage.removeItem("username");
                 $('#login_message').html("Login Failed. Try again.").addClass("alert alert-danger text-center");
             } else {
-                localStorage.username = results[0]["username"]; // Store username
-                localStorage.userid = results[0]["userid"]; // Keep userid if needed elsewhere
+                localStorage.username = results[0]["username"];
+                localStorage.userid = results[0]["userid"];
                 $('#login_message').html('');
                 $('#login_message').removeClass();
                 $('.secured').removeClass('locked').addClass('unlocked');
                 $('#div-login').hide();
                 
-                // CHANGE THIS FROM CLIENTLIST TO FAVORITES
+                // Show favorites page and load favorites
                 $('#div-favorites').show();
-                favoritesController(); // Load favorites
-                saveLastSection("#div-favorites"); // Update last section
+                favoritesController();
+                saveLastSection("#div-favorites");
                 
                 $("#scanuserid").val(localStorage.userid);
             }
@@ -350,7 +351,6 @@ let loginController = () => {
         }
     });
 };
-
 let signUpController = () => {
     $('#signup_message').html("");
     $('#signup_message').removeClass();
@@ -413,27 +413,21 @@ let favoritesController = () => {
         method: "GET",
         data: { username: localStorage.username },
         success: (results) => {
-            if (results.favorites && results.favorites.length === 0) {
+            if (!results.favorites || results.favorites.length === 0) {
                 $('#no-favorites').show();
-            } else if (results.favorites) {
+            } else {
                 results.favorites.forEach(movie => {
-                    // DEBUG: Log the movie object to ensure it has movie_id
-                    console.log("Movie object:", movie);
-                    
-                    let movieCard = `
+                    $('#favorites-list').append(`
                         <div class="favorite-card">
-                            <div class="movie-details">
-                                <h3>${movie.title} (${movie.year})</h3>
-                                <p><strong>Genre:</strong> ${movie.genres}</p>
-                                <p><strong>Rating:</strong> ${movie.rating} (${movie.votes} votes)</p>
-                                <p><strong>Added:</strong> ${new Date(movie.favorited_at).toLocaleDateString()}</p>
-                                <button class="btn btn-danger btn-remove-favorite" 
-                                        data-movie-id="${movie.movie_id || movie.tconst}">
-                                    Remove from Favorites
-                                </button>
-                            </div>
-                        </div>`;
-                    $('#favorites-list').append(movieCard);
+                            <h3>${movie.title}</h3>
+                            <p>${movie.year} • ${movie.genres}</p>
+                            <p>Rating: ${movie.rating}</p>
+                            <button class="btn btn-danger btn-remove-favorite" 
+                                    data-movie-id="${movie.movie_id}">
+                                Remove
+                            </button>
+                        </div>
+                    `);
                 });
             }
         },
@@ -441,7 +435,7 @@ let favoritesController = () => {
             console.error("Error loading favorites:", error);
             $('#favorites-list').html(`
                 <div class="alert alert-danger">
-                    Error loading favorites. ${error.responseJSON?.message || ''}
+                    Error loading favorites. Please try again.
                 </div>
             `);
         }
@@ -824,11 +818,13 @@ $(document).ready(() => {
 });
 $(document).ready(function() {
     // Show login page when "Log In" button is clicked on favorites page
-    $('#btnFavoritesLogin').on('click', function() {
-        $('.content-wrapper').hide(); // Hide all pages
-        $('#div-login').show();      // Show login page
+
+    $('#btnFavoritesLogin').click(() => {
+        $(".content-wrapper").hide();
+        $("#div-login").show();
     });
 
+    
     // Basic login functionality (minimal version)
     $('#btnLogin').on('click', function() {
         // For demo purposes - just show favorites page after clicking login
@@ -841,14 +837,10 @@ $(document).ready(function() {
     });
 
     // Show favorites page when clicking Favorites link
-    $('#link-home').on('click', function(e) {
-        e.preventDefault();
-        $('.content-wrapper').hide();
-        $('#div-favorites').show();
-        
-        // Show login prompt (since we're not actually checking login status in this minimal version)
-        $('#favorites-login').show();
-        $('#no-favorites').hide();
-        $('#favorites-list').hide();
+    $('#link-home').click(() => {
+        $(".content-wrapper").hide();  
+        $("#div-favorites").show();
+        favoritesController();
+        saveLastSection("#div-favorites");
     });
 });
